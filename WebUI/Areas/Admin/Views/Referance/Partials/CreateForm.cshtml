@@ -1,0 +1,33 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Referance_
+@model ReferanceCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Referance" asp-action="Create" method="post" enctype="multipart/form-data" id="formCreateReferance">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.ReferanceGroupId" class="form-label">
+                Referans Grubu
+            </label>
+            <select asp-for="CreateModel.ReferanceGroupId" asp-items="Model.ReferanceGroupList" class="autoInitSelect2 form-select">
+                <option></option>
+            </select>
+            <span asp-validation-for="CreateModel.ReferanceGroupId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Name" class="form-label">
+                İsim
+            </label>
+            <input asp-for="CreateModel.Name" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.ImageFile" class="form-label">
+                Görsel
+            </label>
+            <input asp-for="CreateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="CreateModel.ImageFile" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

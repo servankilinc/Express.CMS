@@ -1,0 +1,195 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Project_
+@model ProjectViewModel
+@{
+    ViewData["Title"] = "Projeler";
+}
+<div class="card">
+    <div class="card-header">
+        <form id="form_page_filter">
+            <div class="row row-gap-4">
+                <div class="col-md-4 col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-lightest">
+                            İsim
+                        </span>
+                        <input name="Name" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-lightest">
+                            Silinenleri Göster
+                        </span>
+                        <div class="input-group-text">
+                            <input name="IsDeleted" type="checkbox" class="form-check-input" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-6">
+                    <button onclick="InitilazeTable(this)" type="button" class="btn btn-light">
+                        <span class="dynamic-content">
+                            <i class="fa-solid fa-search me-2"></i>
+                            Ara
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <div>
+            <a class="btn btn-primary my-3" asp-controller="Project" asp-action="Create">
+                <i class="fa-solid fa-file-circle-plus me-2"></i>
+                Yeni Proje Ekle
+            </a>
+        </div>
+        <table id="table_page" class="table table-hover table-striped">
+            <thead class="bg-light">
+                <tr>
+                    <th>İsim</th>
+                    <th>Görsel</th>
+                    <th>Oluşturma Tarihi</th>
+                    <th>Son Düzenlenme Tarihi</th>
+                    <th>Durum</th>
+                    <th>Silinme Tarihi</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        let PageTable;
+
+        $(document).ready(function(){
+            InitilazeTable();
+        })
+
+        function InitilazeTable(e) {
+
+            PageTable = DatatableManager.Create({serverSide: true,
+                tableId: 'table_page',
+                path: 'Project/DatatableServerSide',
+                method: 'Post',
+                buttonElement: e,
+                requestData: {
+                    filter: {
+                        operator: 'base',
+                        logic: 'and',
+                        filters: [
+                            {
+                                operator: 'contains',
+                                field: "name",
+                                value: $("input[name='Name']").val(),
+                            },
+                            {
+                                operator: 'eq',
+                                field: "IsDeleted",
+                                value: false,
+                                logic: 'or',
+                                filters: [
+                                    {
+                                        operator: 'eq',
+                                        field: "IsDeleted",
+                                        value: $("input[name='IsDeleted']").val(),
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                columns: [
+                    {data: 'name' },
+                    {
+                        data: 'image',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return `<img src="${data}" alt="express-projeler-${data}" style="width: 50px; height: 50px; object-fit: contain;" />`;
+                        }
+                    },
+                    {
+                        data: 'createDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    },
+                    {
+                        data: 'updateDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    },
+                    {
+                        data: 'isDeleted',
+                        render: function (data) {
+                            if(data == true) return (`<span class="badge rounded-pill bg-label-danger"><i class="fa-solid fa-xmark"></i></span>`);
+                            else if(data == false) return (`<span class="badge rounded-pill bg-label-success"><i class="fa-solid fa-check"></i></span>`);
+                            else return ('');
+                        }
+                    },
+                    {
+                        data: 'deletedDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    },
+                    {
+                        data: null,
+                        defaultContent: '',
+                        searchable: false,
+                        createdCell: function (td, cellData, rowData, row, col)
+                        {
+                            let deleteHandleButton = rowData.isDeleted == true ?
+                                UIManager.UndoDeleteButtonTable({
+                                    requestUrl: 'Project/UndoDelete',
+                                    requestData: {
+                                        "id": rowData.id
+                                    },
+                                    pageTable:PageTable
+                                }) :
+                                UIManager.DeleteButtonTable({
+                                    requestUrl: 'Project/Delete',
+                                    requestData: {
+                                        "id": rowData.id
+                                    },
+                                    pageTable:PageTable
+                                });
+
+                            DatatableManager.AppendRowButtons(td,
+                                [
+                                    // 1) Update Button
+                                    UIManager.UpdateButtonTable({
+                                        title: "Bilgileri Düzenle",
+                                        formGetterUrl: 'Project/UpdateForm',
+                                        requestData: {
+                                            "id": rowData.id
+                                        },
+                                        pageTable: PageTable
+                                    }),
+                                    // 2) Delete Button
+                                    deleteHandleButton
+                                ]
+                            );
+                            
+                            let link = document.createElement("a");
+                            link.href = `/Admin/Design/Update?id=${rowData.designId}&returnUrl=/Admin/Project/Index`;
+                            link.className = "btn btn-sm btn-primary mt-2";
+
+                            let icon = document.createElement("i");
+                            icon.className = "fa-solid fa-object-group";
+
+                            link.appendChild(icon);
+                            td.appendChild(link);
+                        }
+                    }
+                ]
+            })
+        }
+    </script>
+}

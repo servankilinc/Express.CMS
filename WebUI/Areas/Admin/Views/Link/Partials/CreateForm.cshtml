@@ -1,0 +1,31 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Link_
+@model LinkCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Link" asp-action="Create" method="post">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Name" class="form-label">
+                İsim
+            </label>
+            <input asp-for="CreateModel.Name" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Icon" class="form-label">
+                İkon
+            </label>
+            <input asp-for="CreateModel.Icon" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Icon" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Url" class="form-label">
+                Url
+            </label>
+            <input asp-for="CreateModel.Url" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Url" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

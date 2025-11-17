@@ -1,0 +1,118 @@
+@using WebUI.Areas.Admin.Models.ViewModels.ContactMessage_
+@model ContactMessageViewModel
+@{
+    ViewData["Title"] = "İletişim Mesajları";
+}
+
+<div class="card">
+    <div class="card-header">
+        <form id="form_page_filter">
+            <div class="row row-gap-4">
+                <div class="col-md-4 col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-lightest">
+                            İsim
+                        </span>
+                        <input name="FullName" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-lightest">
+                            Email
+                        </span>
+                        <input name="Email" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-4 col-md-6 col-12">
+                    <div class="input-group">
+                        <span class="input-group-text bg-lightest">
+                            Konu
+                        </span>
+                        <input name="Subject" type="text" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-4 col-6">
+                    <button onclick="InitilazeTable(this)" type="button" class="btn btn-light">
+                        <span class="dynamic-content">
+                            <i class="fa-solid fa-search me-2"></i>
+                            Ara
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="card-body">
+        <table id="table_page" class="table table-hover table-striped">
+            <thead class="bg-light">
+                <tr>
+                    <th>İsim</th>
+                    <th>İp Adres</th>
+                    <th>Email</th>
+                    <th>Konu</th>
+                    <th>Mesaj</th>
+                    <th>Oluşturma Tarihi</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+
+        let PageTable;
+
+        $(document).ready(function(){
+            InitilazeTable();
+        })
+
+        function InitilazeTable(e) {
+
+            PageTable = DatatableManager.Create({serverSide: true,
+                tableId: 'table_page',
+                path: 'ContactMessage/DatatableServerSide',
+                method: 'Post',
+                buttonElement: e,
+                requestData: {
+                    filter: {
+                        operator: 'base',
+                        logic: 'and',
+                        filters: [
+                            {
+                                operator: 'contains',
+                                field: "fullName",
+                                value: $("input[name='FullName']").val(),
+                            },
+                            {
+                                operator: 'contains',
+                                field: "email",
+                                value: $("input[name='Email']").val(),
+                            },
+                            {
+                                operator: 'contains',
+                                field: "subject",
+                                value: $("input[name='Subject']").val(),
+                            },
+                        ]
+                    }
+                },
+                columns: [
+                    {data: 'fullName' },
+                    {data: 'clientIp' },
+                    {data: 'email' },
+                    {data: 'subject' },
+                    {data: 'message' },
+                    {
+                        data: 'createDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    }
+                ]
+            })
+        }
+    </script>
+}

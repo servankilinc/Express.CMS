@@ -1,0 +1,22 @@
+@using Model.Entities
+@model ICollection<Menu>
+@{
+    Layout = null;
+}
+<style>
+    .list-group-item:nth-child(odd) {
+       background: #fff !important;
+    }
+
+    .list-group-item:nth-child(even) {
+        background: #006dd3 !important;
+        color: #fff;
+    }
+</style>
+
+<ul id="menu-list" class="list-group list-group-numbered mx-3 rounded-0">
+    @foreach (var item in Model.OrderBy(o => o.Priority))
+    {
+        <li data-id="@item.Id" class="list-group-item m-1 rounded-0" role="button">@item.Title</li>
+    }
+</ul>

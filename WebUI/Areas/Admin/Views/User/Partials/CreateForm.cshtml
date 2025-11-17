@@ -1,0 +1,41 @@
+@using WebUI.Areas.Admin.Models.ViewModels.User_
+@model UserCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="User" asp-action="Create" method="post">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.FullName" class="form-label">
+                İsim Soyisim
+            </label>
+            <input asp-for="CreateModel.FullName" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.FullName" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.UserName" class="form-label">
+                Kullanıcı Adı
+            </label>
+            <input asp-for="CreateModel.UserName" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.UserName" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Password" class="form-label">
+                Şifre
+            </label>
+            <input asp-for="CreateModel.Password" type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+            <div class="form-text">Şifre en az 6 karakter içermeli.</div>
+            <span asp-validation-for="CreateModel.Password" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.RoleList" class="form-label">
+                Kullanıcı Rol Listesi
+            </label>
+            <select asp-for="CreateModel.RoleList" asp-items="Model.RoleSelectList" class="autoInitSelect2 form-select" multiple="multiple">
+                <option></option>
+            </select>
+            <span asp-validation-for="CreateModel.RoleList" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,104 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Company_
+@model CompanyUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Company" asp-action="Update" method="post" enctype="multipart/form-data" id="formUpdateCompany">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <input asp-for="UpdateModel.Logo" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Since" class="form-label">
+                Kuruluş Yılı
+            </label>
+            <input asp-for="UpdateModel.Since" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Since" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Address" class="form-label">
+                Addresler (',' ile ayırınız)
+            </label>
+            <input asp-for="UpdateModel.Address" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Address" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.EmailAdresses" class="form-label">
+                Email Adresleri (',' ile ayırınız)
+            </label>
+            <input asp-for="UpdateModel.EmailAdresses" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.EmailAdresses" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.PhoneNumbers" class="form-label">
+                Telefon Numaraları (',' ile ayırınız)
+            </label>
+            <input asp-for="UpdateModel.PhoneNumbers" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.PhoneNumbers" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.FaxNumbers" class="form-label">
+                Fax Numaraları (Opsiyonel) (',' ile ayırınız)
+            </label>
+            <input asp-for="UpdateModel.FaxNumbers" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.FaxNumbers" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.WorkingStartTime" class="form-label">
+                Çalışma Başlangıç Saati
+            </label>
+            <input asp-for="UpdateModel.WorkingStartTime" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.WorkingStartTime" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.WorkingEndTime" class="form-label">
+                Çalışma Bitiş Saati
+            </label>
+            <input asp-for="UpdateModel.WorkingEndTime" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.WorkingEndTime" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Latitude" class="form-label">
+                Latitude
+            </label>
+            <input asp-for="UpdateModel.Latitude" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Latitude" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Longitude" class="form-label">
+                Longitude
+            </label>
+            <input asp-for="UpdateModel.Longitude" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Longitude" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.GapesJSLicenseKey" class="form-label">
+                Gapes JS Lisans Anahtarı
+            </label>
+            <input asp-for="UpdateModel.GapesJSLicenseKey" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.GapesJSLicenseKey" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.CKEditorLicenseKey" class="form-label">
+                CK Editör Lisans Anahtarı
+            </label>
+            <input asp-for="UpdateModel.CKEditorLicenseKey" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.CKEditorLicenseKey" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="UpdateModel.ImageFile" class="form-label">
+                Logo (Opsiyonel)
+            </label>
+            <input asp-for="UpdateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="UpdateModel.ImageFile" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12 border-top mt-3 pt-2">
+            <label class="form-label">
+                Aktif Logo
+            </label>
+            <div class="bg-white shadow-sm rounded-5" style="width: 200px; height:200px; ">
+                <img src="@Model.UpdateModel.Logo" style="width: 200px; height:200px; object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+</form>

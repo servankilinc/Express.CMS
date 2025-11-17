@@ -1,0 +1,44 @@
+﻿@using Model.Dtos.Page_
+@model PageDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+@section HeadContent {
+	<script type="application/ld+json">
+		{
+		  "@@context": "https://schema.org/",
+		  "@@type": "@Model.Name",
+		  "name": "@Model.Name", 
+		  "description": "@Model.PathName",
+		  "sku": "@Model.Id",
+		  "brand": {
+			"@@type": "Brand",
+			"name": "Express Bilgisayar"
+		  }
+		}
+	</script>
+}
+
+
+<div class="page-title">
+	<nav class="breadcrumbs">
+		<div class="container">
+			<ol>
+				<li><a href="/">Ana sayfa</a></li>
+				<li class="current">@Model.Name</li>
+			</ol>
+		</div>
+	</nav>
+</div>
+
+<div class="container-xxl py-3" id="page-@Model.Id">
+    <style>
+        @Html.Raw(Model.DesignModel?.Css)
+    </style>
+
+    @Html.Raw(Model.DesignModel?.Html)
+
+    <script>
+        @Html.Raw(Model.DesignModel?.Script)
+    </script>
+</div>

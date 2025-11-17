@@ -1,0 +1,24 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Announcement_
+@model AnnouncementCreateViewModel
+@{
+	Layout = null;
+}
+
+<form asp-controller="Announcement" asp-action="Create" method="post">
+	<div class="row row-gap-4 m-2">
+		<div class="col-md-6">
+			<label asp-for="CreateModel.Title" class="form-label">
+				Başlık
+			</label>
+			<input asp-for="CreateModel.Title" type="text" class="form-control" />
+			<span asp-validation-for="CreateModel.Title" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="CreateModel.Message" class="form-label">
+				Mesaj
+			</label>
+			<input asp-for="CreateModel.Message" type="text" class="form-control" />
+			<span asp-validation-for="CreateModel.Message" class="form_validation_feedback"></span>
+		</div>
+	</div>
+</form>

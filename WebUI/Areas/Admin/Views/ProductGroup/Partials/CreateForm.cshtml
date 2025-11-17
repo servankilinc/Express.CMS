@@ -1,0 +1,24 @@
+@using WebUI.Areas.Admin.Models.ViewModels.ProductGroup_
+@model ProductGroupCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="ProductGroup" asp-action="Create" method="post">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Name" class="form-label">
+                Ürün Grup İsmi
+            </label>
+            <input asp-for="CreateModel.Name" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.PathName" class="form-label">
+                Path Bilgisi
+            </label>
+            <input asp-for="CreateModel.PathName" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.PathName" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

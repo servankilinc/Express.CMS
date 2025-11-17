@@ -1,0 +1,267 @@
+@using WebUI.Utils.ActionFilters
+@using WebUI.Utils.Extensions
+@{
+	var currentUrl = Context.GetUrl();
+	var lightMode = Context.GetLightMode();
+}
+<!DOCTYPE html>
+<html class="@(lightMode == "dark" ? "dark-style" : "light-style") layout-menu-fixed layout-menu-expanded overflow-x-hidden"
+	  dir="ltr"
+	  data-theme="theme-default"
+	  data-style="light"
+	  lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link rel="icon" type="image/x-icon" href="~/admin/assets/img/favicon/favicon.ico" />
+
+	<partial name="./Partials/_LayoutHeader" />
+
+	<script src="https://unpkg.com/@@grapesjs/studio-sdk/dist/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/tableComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/listPagesComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/swiperComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/iconifyComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/accordionComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/flexComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/canvasEmptyState/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/canvasGridMode/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/rteTinyMce/index.umd.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/@@grapesjs/studio-sdk/dist/style.css" />
+</head>
+<body>
+	<div class="content-wrapper p-5">
+		<div class="bs-stepper wizard-numbered">
+			<div class="bs-stepper-header">
+				<div class="step" data-target="#form-section">
+					<button type="button" class="step-trigger">
+						<span class="bs-stepper-circle">1</span>
+						<span class="bs-stepper-label">
+							<span class="bs-stepper-title">Form</span>
+							<span class="bs-stepper-subtitle">Bilgi Formu</span>
+						</span>
+					</button>
+				</div>
+				<div class="line">
+					<i class="icon-base bx bx-chevron-right scaleX-n1-rtl"></i>
+				</div>
+				<div class="step" data-target="#design-section">
+					<button type="button" class="step-trigger">
+						<span class="bs-stepper-circle">2</span>
+						<span class="bs-stepper-label">
+							<span class="bs-stepper-title">Editör</span>
+							<span class="bs-stepper-subtitle">Sayfa Tasarımı</span>
+						</span>
+					</button>
+				</div>
+			</div>
+			<div class="bs-stepper-content">
+				<div id="form-section" class="content">
+					<div class="row g-3">
+						<div class="col-12">
+							@RenderBody()
+						</div>
+
+						<div class="col-12 d-flex justify-content-end">
+							<button class="btn btn-primary btn-next">
+								<span class="align-middle d-sm-inline-block d-none me-sm-2">İleri</span>
+								<i class="icon-base bx bx-right-arrow-alt scaleX-n1-rtl"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div id="design-section" class="content position-relative">
+					<div class="row g-3">
+						<div id="studio-editor" style="min-height: 100dvh;" class="rounded-5 my-5"></div>
+
+						<div class="col-12 d-flex justify-content-between">
+							<button class="btn btn-secondary btn-prev">
+								<i class="icon-base bx bx-left-arrow-alt me-sm-2 me-0 scaleX-n1-rtl"></i>
+								<span class="align-middle d-sm-inline-block d-none">Geri</span>
+							</button>
+							<button id="save-btn" class="btn btn-primary btn-next">
+								<span class="align-middle d-sm-inline-block d-none me-sm-2">Kaydet 💾</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="content-backdrop fade"></div>
+	</div>
+
+	<partial name="./Partials/_LayoutScripts" />
+
+	<script>
+		const cssLinks = [
+			"https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css",
+			"https://fonts.googleapis.com",
+			"https://fonts.gstatic.com",
+			"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+			"../../common/lib/bootstrap/dist/css/bootstrap.min.css",
+			"../../common/vendor/bootstrap-icons/bootstrap-icons.css",
+			"../../common/vendor/glightbox/css/glightbox.min.css",
+			"../../common/vendor/swiper/swiper-bundle.min.css",
+			"../../common/css/main.css"
+		];
+
+		const jsLinks = [
+			"../../common/lib/jquery/dist/jquery.min.js",
+			"../../common/lib/jquery-validation/dist/jquery.validate.min.js",
+			"../../common/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js",
+			"../../common/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/js/all.min.js",
+			"../../common/vendor/aos/aos.js",
+			"../../common/vendor/glightbox/js/glightbox.min.js",
+			"../../common/vendor/purecounter/purecounter_vanilla.js",
+			"../../common/vendor/imagesloaded/imagesloaded.pkgd.min.js",
+			"../../common/vendor/isotope-layout/isotope.pkgd.min.js",
+			"../../common/vendor/swiper/swiper-bundle.min.js",
+			"../../common/js/site.js",
+			"../../common/js/main.js"
+		];
+	</script>
+
+	<script>
+		const licenseKey = '@(ViewBag.GapesJSLicenseKey != null ? Html.Raw(ViewBag.GapesJSLicenseKey) : "demo")';
+
+		const ligthMode = '@(lightMode == "dark" ? "dark" : "light")';
+
+		var Myeditor = null;
+		var designIdToCreate;
+
+		GrapesJsStudioSDK.createStudioEditor({
+			root: '#studio-editor',
+			licenseKey: licenseKey,
+			theme: ligthMode,
+			project: {
+				type: 'web'
+			},
+			storage: {
+				type: 'self',
+				autosave: false,
+				autosaveChanges: 99999999,
+				onSave: async ({ project, editor }) => {
+					// if (allowSave == false) return;
+					// allowSave = false;
+				},
+				onLoad: async ({ editor, project }) => {
+					Myeditor = editor;
+						
+					// default template temizlemek için
+		
+					
+					 // referance import
+					editor.once('load', () => {
+						const iframe = editor.Canvas.getFrameEl();
+						if (!iframe) return;
+
+						const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+						if (!iframeDoc) return;
+
+						const head = iframeDoc.head;
+
+						// cssLinks from layout
+						cssLinks.forEach(href => {
+							const link = document.createElement('link');
+							link.rel = 'stylesheet';
+							link.href = href;
+							head.appendChild(link);
+						});
+
+						// jsLinks from layout
+						jsLinks.forEach(src => {
+							const script = document.createElement('script');
+							script.src = src;
+							head.appendChild(script);
+						});
+					});
+
+					return { project };
+				},
+			},
+			assets: {
+				storageType: 'self',
+				onUpload: async ({ files, editor }) => {
+					const formData = new FormData();
+					formData.append("designId", designIdToCreate);
+
+					for (const file of files) {
+						formData.append("file", file);
+					}
+
+					const response = await fetch('/Admin/Design/FileUpload', {
+						method: 'POST',
+						body: formData
+					});
+
+					const results = await response.json();
+
+					return results.map(item => ({
+						id: item.name,
+						src: item.url,
+						name: item.name,
+						mimeType: item.type,
+						size: item.size
+					}));
+				},
+				onDelete: async ({ assets, editor }) => {
+					for (const asset of assets) {
+						let formData = new FormData();
+						formData.append("designId", designIdToCreate);
+						formData.append("fileName", asset.attributes.name);
+
+						await fetch('/Admin/Design/FileDelete', {
+							method: 'POST',
+							body: formData
+						});
+					}
+				},
+			},
+			plugins: [
+				StudioSdkPlugins_tableComponent.init({}),
+				StudioSdkPlugins_listPagesComponent.init({}),
+				StudioSdkPlugins_swiperComponent.init({}),
+				StudioSdkPlugins_iconifyComponent.init({}),
+				StudioSdkPlugins_accordionComponent.init({}),
+				StudioSdkPlugins_flexComponent.init({}),
+				StudioSdkPlugins_canvasEmptyState.init({}),
+				StudioSdkPlugins_canvasGridMode.init({}),
+				StudioSdkPlugins_rteTinyMce.init({})
+			]
+		});
+	</script>
+
+
+	<script>
+		const wizardNumbered = document.querySelector('.wizard-numbered');
+		  const wizardNumberedBtnNextList = [].slice.call(wizardNumbered.querySelectorAll('.btn-next'));
+		  const wizardNumberedBtnPrevList = [].slice.call(wizardNumbered.querySelectorAll('.btn-prev'));
+
+		if (typeof wizardNumbered !== undefined && wizardNumbered !== null) {
+		  const numberedStepper = new Stepper(wizardNumbered, {
+			linear: false
+		  });
+		  if (wizardNumberedBtnNextList) {
+			wizardNumberedBtnNextList.forEach(wizardNumberedBtnNext => {
+			  wizardNumberedBtnNext.addEventListener('click', event => {
+				numberedStepper.next();
+			  });
+			});
+		  }
+		  if (wizardNumberedBtnPrevList) {
+			wizardNumberedBtnPrevList.forEach(wizardNumberedBtnPrev => {
+			  wizardNumberedBtnPrev.addEventListener('click', event => {
+				numberedStepper.previous();
+			  });
+			});
+		  }
+		}
+	</script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

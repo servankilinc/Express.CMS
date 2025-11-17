@@ -1,0 +1,43 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Referance_
+@model ReferanceUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Referance" asp-action="Update" method="post" enctype="multipart/form-data" id="formUpdateReferance">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <input asp-for="UpdateModel.Image" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.ReferanceGroupId" class="form-label">
+                Referans Grubu
+            </label>
+            <select asp-for="UpdateModel.ReferanceGroupId" asp-items="Model.ReferanceGroupList" class="autoInitSelect2 form-select">
+                <option></option>
+            </select>
+            <span asp-validation-for="UpdateModel.ReferanceGroupId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Name" class="form-label">
+                İsim
+            </label>
+            <input asp-for="UpdateModel.Name" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.ImageFile" class="form-label">
+                Görsel (Opsiyonel)
+            </label>
+            <input asp-for="UpdateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="UpdateModel.ImageFile" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12 border-top mt-3 pt-2">
+            <label class="form-label">
+                Aktif Görsel
+            </label>
+            <div class="bg-white shadow-sm rounded-5" style="width: 200px; height:200px; ">
+                <img src="@Model.UpdateModel.Image" style="width: 200px; height:200px; object-fit: contain;" />
+            </div>
+        </div>
+    </div>
+</form>

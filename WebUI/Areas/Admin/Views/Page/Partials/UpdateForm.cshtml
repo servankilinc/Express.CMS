@@ -1,0 +1,52 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Page_
+@model PageUpdateViewModel
+@{
+	Layout = null;
+}
+
+<form asp-controller="Page" asp-action="Update" method="post" id="formTest">
+	<div class="row row-gap-4 m-2">
+		<input asp-for="UpdateModel.Id" type="hidden" />
+		<input asp-for="UpdateModel.ShowFooter" type="hidden" />
+		<div class="col-md-6">
+			<label asp-for="UpdateModel.Name" class="form-label">
+				İsim
+			</label>
+			<input asp-for="UpdateModel.Name" type="text" class="form-control" />
+			<span asp-validation-for="UpdateModel.Name" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="UpdateModel.PathName" class="form-label">
+				Sayfa Uzantısı
+			</label>
+			<input asp-for="UpdateModel.PathName" type="text" class="form-control" />
+			<span asp-validation-for="UpdateModel.PathName" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="UpdateModel.ShowFooter" class="form-label">
+				Footer'da Gösterilsin mi?
+			</label>
+			<label class="switch">
+				@if(Model.UpdateModel.ShowFooter == true)
+				{
+					<input id="temp_check_ShowFooter" type="checkbox" class="switch-input" checked />
+				}
+				else
+				{
+					<input id="temp_check_ShowFooter" type="checkbox" class="switch-input" />
+				}
+				<span class="switch-toggle-slider">
+					<span class="switch-on"></span>
+					<span class="switch-off"></span>
+				</span>
+			</label>
+			<span asp-validation-for="UpdateModel.ShowFooter" class="form_validation_feedback"></span>
+		</div>
+	</div>
+</form>
+
+<script>
+	$("#temp_check_ShowFooter").on("change", function(e) {
+		$("input[name='UpdateModel.ShowFooter']").val(e.target.checked ? "true" : "false");
+	})
+</script>

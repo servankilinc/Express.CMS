@@ -1,0 +1,22 @@
+using Core.Model;
+using FluentValidation;
+
+namespace Model.Dtos.ProductGroup_
+{
+    public class ProductGroupUpdateDto : IDto
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; } = null !;
+        public string PathName { get; set; } = null!;
+    }
+
+    public class ProductGroupUpdateDtoValidator : AbstractValidator<ProductGroupUpdateDto>
+    {
+        public ProductGroupUpdateDtoValidator()
+        {
+            RuleFor(v => v.Id).NotNull().WithMessage("İşlem için yeterli bilgi sağlanamadı.");
+            RuleFor(v => v.Name).NotEmpty().WithMessage("İsim bilgisi boş geçilemez.");
+            RuleFor(v => v.PathName).NotEmpty().WithMessage("Path bilgisi boş geçilemez.");
+        }
+    }
+}

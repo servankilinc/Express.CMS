@@ -1,0 +1,47 @@
+@using WebUI.Areas.Admin.Models.ViewModels.SubMenu_
+@model SubMenuCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="SubMenu" asp-action="Create" method="post">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.MenuId" class="form-label">
+                Menu
+            </label>
+            <select asp-for="CreateModel.MenuId" asp-items="Model.MenuList" class="autoInitSelect2 form-select">
+                <option></option>
+            </select>
+            <span asp-validation-for="CreateModel.MenuId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Title" class="form-label">
+                Başlık
+            </label>
+            <input asp-for="CreateModel.Title" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Title" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Url" class="form-label">
+                Url
+            </label>
+            <input asp-for="CreateModel.Url" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Url" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Description" class="form-label">
+                Açıklama (Opsiyonel)
+            </label>
+            <input asp-for="CreateModel.Description" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Description" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Icon" class="form-label">
+                İkon (Opsiyonel)
+            </label>
+            <input asp-for="CreateModel.Icon" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Icon" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

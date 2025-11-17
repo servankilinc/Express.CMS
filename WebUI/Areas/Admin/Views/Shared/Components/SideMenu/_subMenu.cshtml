@@ -1,0 +1,56 @@
+@using WebUI.Areas.Admin.Models.UI
+@using WebUI.Utils.ActionFilters
+@using WebUI.Utils.Extensions
+@model List<MenuItem>
+@{
+	string _path_ = Context.GetPath();
+	string _basePath_ = Context.GetBasePath();
+}
+
+<ul class="menu-sub">
+	@foreach (var item in Model)
+	{
+		if (!string.IsNullOrEmpty(item.GroupName))
+		{
+			<li class="menu-header small text-uppercase">
+				<span class="menu-header-text">
+					@item.GroupName
+				</span>
+			</li>
+		}
+
+		bool isThereSubs = false;
+		bool isActive = false;
+		if (item.Type == 0)
+		{
+			isThereSubs = item.SubMenuItems != null && item.SubMenuItems.Any();
+			isActive = isThereSubs && item.SubMenuItems!.Any(f => f.Path == _basePath_ || f.Path == $"/Admin{_basePath_}");
+
+			<li class="menu-item @(isActive ? "active open" : string.Empty)">
+				<span role="button" class="menu-link @(isActive ? "active" : string.Empty) @(isThereSubs ? "menu-toggle" : string.Empty)" data-icon="@item.Icon">
+					<i class="menu-icon @item.Icon"></i>
+					<div class="page-name">@item.Title</div>
+				</span>
+				@if (isThereSubs)
+				{
+					<partial name="./_subMenu.cshtml" model="@item.SubMenuItems" />
+				}
+			</li>
+		}
+		else if (item.Type == 1)
+		{
+			isActive = item.Path == _basePath_ || item.Path == $"/Admin{_basePath_}";
+
+			<li class="menu-item @(isActive ? "active open" : string.Empty)">
+				<a href="@item.Path" class="menu-link @(isActive ? "active" : string.Empty) @(isThereSubs ? "menu-toggle" : string.Empty)" data-icon="@item.Icon">
+					<i class="menu-icon @item.Icon"></i>
+					<div class="page-name">@item.Title</div>
+				</a>
+				@if (isThereSubs)
+				{
+					<partial name="./_subMenu.cshtml" model="@item.SubMenuItems" />
+				}
+			</li>
+		}
+	}
+</ul>

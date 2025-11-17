@@ -1,0 +1,218 @@
+﻿@using WebUI.Models.ViewModels
+@model ContactViewModel
+@{
+	var phoneList = Model.Company?.GetPhoneNumbers() ?? new List<string>();
+	var mailList = Model.Company?.GetEmailAdresses() ?? new List<string>();
+}
+
+<style>
+	.status-error {
+		display: none;
+		color: #e34454;
+		text-align: left;
+		margin-bottom: 24px;
+		font-weight: 600; 
+		padding: 15px;
+		border-radius: 6px;
+	}
+
+	.status-success {
+		display: none;
+		color: #059652; 
+		text-align: center;
+		padding: 15px;
+		margin-bottom: 24px;
+		font-weight: 600;
+		border-radius: 6px;
+	}
+
+	.form_validation_feedback {
+		color: #e34454;
+		font-size: 12px;
+	}
+</style>
+
+@if (Model.Company != null)
+{
+	<section class="contact section bg-light">
+		<!--  data-aos="fade-up" data-aos-delay="100" -->
+		<div class="container section-title">
+			<h2>İLETİŞİM FORMU</h2>
+			<p>İstediğiniz zaman bize ulaşabilirsiniz.</p>
+		</div>
+
+		<!--  data-aos="fade-up" data-aos-delay="100" -->
+		<div class="container">
+			<div class="row gy-4 h-100">
+				<div class="col-lg-6">
+					<div class="row h-100" style="row-gap:16px;">
+						<div class="col-md-6">
+							<!--  data-aos="fade" data-aos-delay="200" -->
+							<div class="info-item h-100 bg-white rounded-4 shadow-sm">
+								<i class="bi bi-geo-alt"></i>
+								<h3>Address</h3>
+								<per>
+									@Model.Company.Address
+								</per>
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<!-- data-aos="fade" data-aos-delay="300" -->
+							<div class="info-item h-100 bg-white rounded-4 shadow-sm">
+								<i class="bi bi-telephone"></i>
+								<h3>Telefon Numaralarımız</h3>
+								@foreach (var phone in phoneList)
+								{
+									<p>@phone</p>
+								}
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<!--  data-aos="fade" data-aos-delay="400" -->
+							<div class="info-item h-100 bg-white rounded-4 shadow-sm">
+								<i class="bi bi-envelope"></i>
+								<h3>Eposta Adreslerimiz</h3>
+								@foreach (var mail in mailList)
+								{
+									<p>@mail</p>
+								}
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<!-- data-aos="fade" data-aos-delay="500" -->
+							<div class="info-item h-100 bg-white rounded-4 shadow-sm">
+								<i class="bi bi-clock"></i>
+								<h3>Aktif Olduğumuz Saatler</h3>
+								<p>Pazartesi - Cuma</p>
+								@if (Model.Company.WorkingStartTime != null && Model.Company.WorkingEndTime != null)
+								{
+									<p>@Model.Company.WorkingStartTime - @Model.Company.WorkingEndTime</p>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-6">
+					<!-- data-aos="fade-up" data-aos-delay="200" -->
+					<form id="formSendCotactMessage" asp-controller="Contact" asp-action="SendContactMessage" method="post" class="php-email-form bg-white rounded-3 shadow-sm">
+						<div class="row gy-4">
+							<div class="col-md-6">
+								<input type="text" asp-for="SendContactMessageModel.FullName" class="form-control" placeholder="İsim Soysim" required>
+								<span asp-validation-for="SendContactMessageModel.FullName" class="form_validation_feedback"></span>
+							</div>
+
+							<div class="col-md-6 ">
+								<input type="email" asp-for="SendContactMessageModel.Email" class="form-control" placeholder="Eposta Adresiniz" required>
+								<span asp-validation-for="SendContactMessageModel.Email" class="form_validation_feedback"></span>
+							</div>
+
+							<div class="col-12">
+								<input type="text" asp-for="SendContactMessageModel.Subject" class="form-control" placeholder="Konu" required>
+								<span asp-validation-for="SendContactMessageModel.Subject" class="form_validation_feedback"></span>
+							</div>
+
+							<div class="col-12">
+								<textarea class="form-control" asp-for="SendContactMessageModel.Message" rows="6" placeholder="Mesaj" required></textarea>
+								<span asp-validation-for="SendContactMessageModel.Message" class="form_validation_feedback"></span>
+							</div>
+
+							<div class="col-12 text-center" id="statusSendCotactMessage">
+                                <div class="status-error"></div>
+								<div class="status-success">Mesajınız Başarıyla Gönderildi Teşekürler!</div>
+
+								<button id="btnSendCotactMessage" class="btn btn-outline-danger py-2 px-5" type="button" onclick="SendContactMessage()">
+									<span class="dynamic-content">
+										Formu Gönder
+										<i class="bi bi-send-fill ms-3"></i>
+									</span>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+}
+
+
+
+<script>
+	function SendContactMessage(){
+		const form = $("#formSendCotactMessage");
+		const button = $("#btnSendCotactMessage");
+
+		let originalBtnContent = '...';
+
+		$.ajax(
+		{
+			url: form.attr("action"),
+			type: form.attr("method"),
+			data:form.serializeArray(),
+			beforeSend: function () {
+				button.prop("disabled", true);
+				let dynamicContent = button.find(".dynamic-content");
+				if (dynamicContent.length == 1) {
+					originalBtnContent = dynamicContent.html();
+					dynamicContent.html('<i class="fa-solid fa-spinner me-2"></i> Bekleyiniz');
+				}
+			},
+			success: function (response) {
+				$("#statusSendCotactMessage .status-error").hide();
+				$("#statusSendCotactMessage .status-success").show();
+			},
+			error: function (xhr, status, error) {
+				let errorMessage =  "Mesajınız Gönderilemedi!";
+				if (xhr.responseJSON != null && (xhr.responseJSON.type != null || xhr.responseJSON.Type != null)) {
+					if (xhr.responseJSON.type == "Business" || xhr.responseJSON.Type == "Business")
+					{
+						errorMessage = xhr.responseJSON.Detail || xhr.responseJSON.detail || "İşlem Sırasında Bir Sorun Oluştur";
+					}
+					else if (xhr.responseJSON.type == "Validation" || xhr.responseJSON.Type == "Validation")
+					{
+						errorMessage = "Eksik veya Hatalı Bilgi Gönderildiği İçin İşleminiz Devam edemiyoruz.";
+						ShowValidationErrors(xhr.responseJSON);
+					}
+				}
+
+				$("#statusSendCotactMessage .status-success").hide();
+				$("#statusSendCotactMessage .status-error").text(errorMessage);
+				$("#statusSendCotactMessage .status-error").show();
+			},
+			complete: function () {
+				button.prop("disabled", false);
+				let dynamicContent = button.find(".dynamic-content");
+				if (dynamicContent.length == 1) {
+					dynamicContent.html(originalBtnContent);
+				}
+			}
+		});
+	}
+
+	function ShowValidationErrors(response) {
+		var elementsOfValidationMsg = $(`[data-valmsg-for]`);
+		if (elementsOfValidationMsg != null && elementsOfValidationMsg.length > 0) {
+			elementsOfValidationMsg.each((i, e) => $(e).text(""));
+		}
+
+		if (response != null && response.errors != null && Array.isArray(response.errors)) {
+
+			response.errors.forEach((validError, index) => {
+				let $target = $(`[data-valmsg-for$='.${validError.propertyName}']`);
+
+				if ($target.length === 0) {
+
+					$target = $(`[data-valmsg-for='${validError.propertyName}']`);
+				}
+
+				if ($target.length != 0) {
+					$target.text(validError.errorMessage);
+				}
+			})
+		}
+	}
+</script>

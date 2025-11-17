@@ -1,0 +1,86 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Blog_
+@model BlogUpdateViewModel
+@{
+	Layout = "_LayoutEditor";
+	ViewData["Title"] = "Blog Düzenle";
+}
+
+<div class="card">
+	<div class="card-header">
+		Blog Bilgilerini Düzenle
+	</div>
+	<div class="card-body">
+		<form asp-controller="Blog" asp-action="Update" method="post" enctype="multipart/form-data" id="formUpdateBlog">
+			<div class="row row-gap-4 m-2">
+				<input asp-for="UpdateModel.Id" type="hidden" />
+				<input asp-for="UpdateModel.Image" type="hidden" />
+				<div class="col-md-6">
+					<label asp-for="UpdateModel.AuthorId" class="form-label">
+						Yazar
+					</label>
+					<select asp-for="UpdateModel.AuthorId" asp-items="Model.AuthorList" class="autoInitSelect2 form-select">
+						<option></option>
+					</select>
+					<span asp-validation-for="UpdateModel.AuthorId" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-md-6">
+					<label asp-for="UpdateModel.Title" class="form-label">
+						Başlık
+					</label>
+					<input asp-for="UpdateModel.Title" type="text" class="form-control" />
+					<span asp-validation-for="UpdateModel.Title" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12">
+					<label asp-for="UpdateModel.ImageFile" class="form-label">
+						Görsel (Opsiyonel)
+					</label>
+					<input asp-for="UpdateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+					<span asp-validation-for="UpdateModel.ImageFile" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12 border-top mt-3 pt-2">
+					<label class="form-label">
+						Aktif Görsel
+					</label>
+					<div class="bg-white shadow-sm rounded-5" style="width: 200px; height:200px; ">
+						<img src="@Model.UpdateModel.Image" style="width: 200px; height:200px; object-fit: contain;" />
+					</div>
+				</div>
+				<div class="col-12 my-5">
+					<div class="main-container">
+						<div class="editor-container editor-container_classic-editor editor-container_include-style
+							editor-container_include-block-toolbar editor-container_include-word-count editor-container_include-fullscreen"
+							 id="editor-container">
+							<div class="editor-container__editor">
+								<textarea id="editor" asp-for="UpdateModel.Content"></textarea>
+							</div>
+							<div class="editor_container__word-count" id="editor-word-count"></div>
+						</div>
+					</div>
+					<span asp-validation-for="UpdateModel.Content" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12">
+					<button type="submit" class="btn btn-success">
+						<i class="fa-solid fa-floppy-disk me-2"></i>
+						Kaydet
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+@* 
+@section Scripts{
+	<script>
+		function SendForm(btn){
+			 RequestManager.Post({
+				path: $("#formUpdateBlog").attr("action"),
+				buttonElement: btn.currentTarget,
+				formId: $("#formUpdateBlog").attr("id"),
+				waitToastr: true,
+				onSuccess: () => {
+					redirect = "/Blog/Index"
+				}
+			})
+		}
+	</script>
+} *@

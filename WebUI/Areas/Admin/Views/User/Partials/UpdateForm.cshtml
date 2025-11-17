@@ -1,0 +1,49 @@
+@using WebUI.Areas.Admin.Models.ViewModels.User_
+@model UserUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="User" asp-action="Update" method="post">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.FullName" class="form-label">
+                İsim Soyisim
+            </label>
+            <input asp-for="UpdateModel.FullName" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.FullName" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.UserName" class="form-label">
+                Kullanıcı Adı
+            </label>
+            <input asp-for="UpdateModel.UserName" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.UserName" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.OldPassword" class="form-label">
+                Eski Şifre
+            </label>
+            <input asp-for="UpdateModel.OldPassword" type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+            <span asp-validation-for="UpdateModel.OldPassword" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.NewPassword" class="form-label">
+                Yeni Şifre (opsiyonel)
+            </label>
+            <input asp-for="UpdateModel.NewPassword" type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+            <div class="form-text">(Girilmediği takdirde değiştirilmez)</div>
+            <span asp-validation-for="UpdateModel.NewPassword" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.RoleList" class="form-label">
+                Kullanıcı Rol Listesi
+            </label>
+            <select name="UpdateModel.RoleList[]" asp-items="Model.RoleSelectList" class="autoInitSelect2 form-select" multiple="multiple">
+                <option></option>
+            </select>
+            <span asp-validation-for="UpdateModel.RoleList" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

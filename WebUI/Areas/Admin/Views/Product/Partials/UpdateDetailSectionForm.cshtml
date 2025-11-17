@@ -1,0 +1,28 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Product_
+@using WebUI.Areas.Admin.Models.ViewModels.Product_.ProductDetailSection
+@model ProductDetailSectionUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Product" asp-action="UpdateDetailSection" method="post">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.ProductId" class="form-label">
+                Ürün
+            </label>
+            <select asp-for="UpdateModel.ProductId" asp-items="Model.ProductList" class="autoInitSelect2 form-select">
+                <option></option>
+            </select>
+            <span asp-validation-for="UpdateModel.ProductId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Title" class="form-label">
+                Başlık
+            </label>
+            <input asp-for="UpdateModel.Title" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Title" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

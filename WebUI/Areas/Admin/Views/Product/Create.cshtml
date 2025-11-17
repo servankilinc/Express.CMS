@@ -1,0 +1,67 @@
+﻿@using WebUI.Areas.Admin.Models.ViewModels.Product_
+@model ProductCreateViewModel
+@{
+    Layout = "_LayoutDesignCreate";
+    ViewData["Title"] = "Ürün Ekle";
+}
+
+<form asp-controller="Product" asp-action="Create" method="post" enctype="multipart/form-data" id="formCreateProduct" class="w-100">
+    <input asp-for="CreateModel.DesignCreateModel.Id" type="hidden" />
+    <input asp-for="CreateModel.DesignCreateModel.Html" type="hidden" />
+    <input asp-for="CreateModel.DesignCreateModel.Css" type="hidden" />
+    <input asp-for="CreateModel.DesignCreateModel.Script" type="hidden" />
+    <input asp-for="CreateModel.DesignCreateModel.ProjectJson" type="hidden" />
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.ProductGroupId" class="form-label">
+                Ürün Grubu
+            </label>
+            <select asp-for="CreateModel.ProductGroupId" asp-items="Model.ProductGroupList" class="autoInitSelect2 form-select" required>
+                <option></option>
+            </select>
+            <span asp-validation-for="CreateModel.ProductGroupId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Name" class="form-label">
+                İsim
+            </label>
+            <input asp-for="CreateModel.Name" type="text" class="form-control" required />
+            <span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="CreateModel.Description" class="form-label">
+                Ürün Detay
+            </label>
+            <textarea asp-for="CreateModel.Description" type="text" class="form-control" rows="5" required></textarea>
+            <span asp-validation-for="CreateModel.Description" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="CreateModel.ImageFile" class="form-label">
+                Görsel
+            </label>
+            <input asp-for="CreateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="CreateModel.ImageFile" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        designIdToCreate = '@Html.Raw(Model.CreateModel.DesignCreateModel?.Id)';
+
+        document.getElementById('save-btn').addEventListener('click', () => {
+            // Myeditor.store();
+            const html = Myeditor.getHtml();
+            const css = Myeditor.getCss();
+            const js = Myeditor.getJs();
+            const project = Myeditor.getProjectData();
+
+            $("input[name='CreateModel.DesignCreateModel.Html']").val(html);
+            $("input[name='CreateModel.DesignCreateModel.Css']").val(css);
+            $("input[name='CreateModel.DesignCreateModel.Script']").val(js);
+            $("input[name='CreateModel.DesignCreateModel.ProjectJson']").val(JSON.stringify(project));
+
+            $("#formCreateProduct").submit();
+        });
+    </script>
+}

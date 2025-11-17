@@ -1,0 +1,48 @@
+@using WebUI.Areas.Admin.Models.ViewModels.SubMenu_
+@model SubMenuUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="SubMenu" asp-action="Update" method="post">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.MenuId" class="form-label">
+                Menu
+            </label>
+            <select asp-for="UpdateModel.MenuId" asp-items="Model.MenuList" class="autoInitSelect2 form-select">
+                <option></option>
+            </select>
+            <span asp-validation-for="UpdateModel.MenuId" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Title" class="form-label">
+                Başlık
+            </label>
+            <input asp-for="UpdateModel.Title" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Title" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Url" class="form-label">
+                Url
+            </label>
+            <input asp-for="UpdateModel.Url" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Url" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Description" class="form-label">
+                Açıklama (Opsiyonel)
+            </label>
+            <input asp-for="UpdateModel.Description" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Description" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Icon" class="form-label">
+                Ikon (Opsiyonel)
+            </label>
+            <input asp-for="UpdateModel.Icon" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Icon" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

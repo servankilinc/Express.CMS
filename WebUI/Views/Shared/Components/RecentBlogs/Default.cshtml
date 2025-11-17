@@ -1,0 +1,55 @@
+﻿@using WebUI.Models.ViewModels
+@model RecentBlogsViewModel
+@{ 
+}
+
+@if (Model.BlogList != null && Model.BlogList.Any())
+{
+    <section id="recent-posts" class="recent-posts section">
+
+        <!-- Section Title -->
+        <!-- data-aos="fade-up" -->
+        <div class="container section-title">
+            <h2>Bloglar</h2>
+            <p>Güncel Blog Yazıları</p>
+        </div>
+
+        <div class="container">
+            <!--  data-aos="fade-up" data-aos-delay="100" -->
+            <a asp-controller="Blog" asp-action="List" class="btn btn-light mb-4 shadow-sm px-4">
+                <i class="bi bi-arrow-right me-3"></i> Tüm Bloglar
+            </a>
+            <div class="row gy-5">
+                @foreach (var blog in Model.BlogList)
+                {
+                    <div class="col-xl-4 col-md-6">
+                        <!-- data-aos="fade-up" data-aos-delay="100" -->
+                        <div class="post-item position-relative h-100 rounded-lg">
+                            <div class="post-img position-relative overflow-hidden">
+                                <img src="@blog.Image" class="img-fluid" alt="">
+                                <span class="post-date">@blog.CreateDate.ToShortDateString()</span>
+                            </div>
+                            <div class="post-content d-flex flex-column">
+                                <h3 class="post-title">@blog.Title</h3>
+                                <div class="meta d-flex align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person"></i> 
+                                        <span class="ps-2">
+                                            @(blog.Author?.FullName ?? "Express Bil.")
+                                        </span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <a asp-controller="Blog" asp-action="Read" asp-route-id="@blog.Id" class="readmore stretched-link">
+                                    <span>Daha Fazla</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </section>
+}

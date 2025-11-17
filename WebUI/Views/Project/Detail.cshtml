@@ -1,0 +1,56 @@
+﻿@using Model.Dtos.Project_
+@model ProjectDto
+@{
+	ViewData["Title"] = "Proje Detay";
+}
+
+<div class="page-title">
+	<nav class="breadcrumbs">
+		<div class="container">
+			<ol>
+				<li><a href="/">Ana sayfa</a></li>
+				<li class="current">Proje Detay</li>
+			</ol>
+		</div>
+	</nav>
+</div>
+
+<section id="blog-details" class="blog-details section pb-5">
+	<div class="container-lg">
+
+		<article>
+
+			<div class="post-img" style="height: 30vh; ">
+				<img src="@Model.Image" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: contain;">
+			</div>
+
+			<h2 class="title">
+				@Model.Name
+			</h2>
+
+			<div class="content pb-5">
+				<style>
+					@Html.Raw(Model.Design?.Css)
+				</style>
+
+				@Html.Raw(Model.Design?.Html)
+
+				<script>
+					@Html.Raw(Model.Design?.Script)
+				</script>
+			</div>
+
+			<div class="meta-bottom">
+				<i class="bi bi-folder"></i>
+				<ul class="cats">
+					<li><a href="#">Express Bilgisayar</a></li>
+				</ul>
+
+				<i class="bi bi-tags"></i>
+				<ul class="tags">
+					<li><a href="#">@Model.Name</a></li>
+				</ul>
+			</div>
+		</article>
+	</div>
+</section>

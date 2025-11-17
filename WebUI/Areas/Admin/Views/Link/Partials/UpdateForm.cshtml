@@ -1,0 +1,32 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Link_
+@model LinkUpdateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Link" asp-action="Update" method="post">
+    <div class="row row-gap-4 m-2">
+        <input asp-for="UpdateModel.Id" type="hidden" />
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Name" class="form-label">
+                İsim
+            </label>
+            <input asp-for="UpdateModel.Name" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Name" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Icon" class="form-label">
+                İkon
+            </label>
+            <input asp-for="UpdateModel.Icon" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Icon" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="UpdateModel.Url" class="form-label">
+                Url
+            </label>
+            <input asp-for="UpdateModel.Url" type="text" class="form-control" />
+            <span asp-validation-for="UpdateModel.Url" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

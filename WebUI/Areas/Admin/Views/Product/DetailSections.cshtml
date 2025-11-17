@@ -1,0 +1,122 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Product_
+@using WebUI.Areas.Admin.Models.ViewModels.Product_.ProductDetailSection
+@model ProductDetailSectionsViewModel
+@{
+    ViewData["Title"] = "Ürünler Detay Bölümleri";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">
+            <h5 class="mb-0">@Model.Product.Name - Detay Bölümleri</h5>
+        </div>
+    </div>
+    <div class="card-body">
+        <div>
+            <a class="btn btn-primary my-3" asp-controller="Product" asp-action="CreateDetailSection" asp-route-productId="@Model.Product.Id">
+                <i class="fa-solid fa-file-circle-plus me-2"></i>
+                Yeni Bölüm Ekle
+            </a>
+        </div>
+        <table id="table_page" class="table table-hover table-striped">
+            <thead class="bg-light">
+                <tr>
+                    <th>Başlık</th>
+                    <th>Öncelik Sırası</th>
+                    <th>Oluşturma Tarihi</th>
+                    <th>Son Düzenlenme Tarihi</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+
+        let PageTable;
+
+        $(document).ready(function(){
+            InitilazeTable();
+        })
+
+        function InitilazeTable(e) {
+
+            PageTable = DatatableManager.Create({serverSide: true,
+                tableId: 'table_page',
+                path: 'DetailSection/DatatableServerSide',
+                method: 'Post',
+                buttonElement: e,
+                requestData: {
+                    filter: {
+                        operator: 'eq',
+                        field: "productId",
+                        value: '@Html.Raw(Model.Product.Id)'
+                    }
+                },
+                columns: [
+                    {data: 'title' },
+                    {data: 'priority' },
+                    {
+                        data: 'createDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    },
+                    {
+                        data: 'updateDateUtc',
+                        render: function (data) {
+                            if(data == null) return '';
+                            return moment(data).format('DD.MM.YYYY HH:mm');
+                        }
+                    }, 
+                    {
+                        data: null,
+                        defaultContent: '',
+                        searchable: false,
+                        createdCell: function (td, cellData, rowData, row, col)
+                        {
+                            DatatableManager.AppendRowButtons(td,
+                                [
+                                    // 1) Update Button
+                                    UIManager.UpdateButtonTable({
+                                        title: "Detay Bilgilerini Düzenle",
+                                        formGetterUrl: 'Product/UpdateDetailSectionForm',
+                                        requestData: {
+                                            "id": rowData.id
+                                        },
+                                        pageTable: PageTable
+                                    }),
+                                    // 2) Delete Button
+                                    UIManager.DeleteButtonTable({
+                                        requestUrl: 'DetailSection/Delete',
+                                        disable: rowData.isDeleted == true,
+                                        requestData: {
+                                            // deleteModel destegi yok
+                                            "id": rowData.id
+                                        },
+                                        pageTable:PageTable
+                                    })
+                                ]
+                            );
+
+                            let link = document.createElement("a");
+                            link.href = `/Admin/Design/Update?id=${rowData.designId}&returnUrl=/Admin/Product/DetailSections?productId=${rowData.productId}`;
+                            link.className = "btn btn-sm btn-primary mt-2";
+
+                            let icon = document.createElement("i");
+                            icon.className = "fa-solid fa-object-group";
+
+                            link.appendChild(icon);
+                            td.appendChild(link);
+                        }
+                    }
+                ]
+            })
+        }
+    </script>
+}

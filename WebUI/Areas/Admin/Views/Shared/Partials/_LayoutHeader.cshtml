@@ -1,0 +1,43 @@
+@using WebUI.Utils.ActionFilters
+@using WebUI.Utils.Extensions
+
+@{
+    var lightMode = Context.GetLightMode();
+}
+
+<!-- LIBS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css" integrity="sha512-cn16Qw8mzTBKpu08X0fwhTSv02kK/FojjNLz0bwp2xJ4H+yalwzXKFw/5cLzuBZCxGWIA+95X4skzvo8STNtSg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="~/admin/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/admin/lib/perfect-scrollbar/perfect-scrollbar.min.css" />
+<link rel="stylesheet" href="~/admin/lib/apex-charts/apex-charts.css" />
+<link rel="stylesheet" href="~/admin/lib/select2/select2.css" />
+<link rel="stylesheet" href="~/admin/lib/tagify/tagify.css" />
+<link rel="stylesheet" href="~/admin/lib/typeahead-js/typeahead.css" />
+<link rel="stylesheet" href="~/admin/lib/bs-stepper/bs-stepper.css" />
+<link rel="stylesheet" href="~/admin/lib/flatpickr/flatpickr.css" />
+<link rel="stylesheet" href="~/admin/lib/pickr/pickr-themes.css" />
+<link rel="stylesheet" href="~/admin/lib/jquery-timepicker/jquery-timepicker.css" />
+<link rel="stylesheet" href="~/admin/lib/simple-notify/simple-notify.min.css" />
+<link rel="stylesheet" href="~/admin/lib/pace/pace-theme-minimal.css" />
+<link rel="stylesheet" href="~/admin/lib/bootstrap-daterangepicker/bootstrap-daterangepicker.css" />
+<link rel="stylesheet" href="~/admin/lib/bootstrap-datepicker/bootstrap-datepicker.css" />
+
+<link rel="stylesheet" href="~/admin/lib/datatables-bs5/datatables.bootstrap5.css" />
+<link rel="stylesheet" href="~/admin/lib/datatables-buttons-bs5/buttons.bootstrap5.css" />
+<link rel="stylesheet" href="~/admin/lib/datatables-responsive-bs5/responsive.bootstrap5.css" />
+<!-- LIBS -->
+@if (lightMode == "dark")
+{
+    <link rel="stylesheet" href="~/admin/css/core-dark.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/admin/css/theme-default-dark.css" class="template-customizer-theme-css" />
+}
+else
+{
+    <link rel="stylesheet" href="~/admin/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="~/admin/css/theme-default.css" class="template-customizer-theme-css" />
+}
+<link rel="stylesheet" href="~/admin/css/site.css" asp-append-version="true" />
+
+<script src="~/admin/js/config.js"></script>
+<script src="~/admin/js/helpers.js"></script>

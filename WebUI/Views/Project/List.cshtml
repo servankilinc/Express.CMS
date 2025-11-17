@@ -1,0 +1,100 @@
+﻿@using Core.Utils.Pagination
+@using Model.Entities
+@model PaginationResponse<Project>
+@{
+	ViewData["Title"] = "Proje Listesi";
+
+	int start = Math.Max(1, Model.Page - 2);
+	int end = Math.Min(Model.PageCount, Model.Page + 2);
+}
+
+<div class="page-title">
+	<nav class="breadcrumbs py-4">
+		<div class="container">
+			<ol>
+				<li><a href="/">Ana sayfa</a></li>
+				<li class="current">Projelerimiz</li>
+			</ol>
+		</div>
+	</nav>
+</div>
+
+<div class="row">
+	<div class="col-12">
+		<section id="blog-posts" class="blog-posts section">
+			<div class="container-xl">
+				<div class="row gy-4">
+					@if (Model.Data == null || !Model.Data.Any())
+					{
+						<h4>Herhangi bir proje bulunamamaktadı.</h4>
+					}
+					else
+					{
+						@foreach (var project in Model.Data)
+						{
+							<div class="col-lg-4 col-md-6 ">
+								<article class="d-flex flex-column">
+									<div style="height:30vh">
+										<img src="@project.Image" alt="" style="height: 100%; width:100%; object-fit:contain;">
+									</div>
+
+									<h2 class="title">
+										<a asp-controller="Product" asp-action="Detail" asp-route-Id="@project.Id">@project.Name</a>
+									</h2>
+
+	@* 								<div class="content">
+										<div class="read-more">
+											<a asp-controller="Project" asp-action="Detail" asp-route-Id="@project.Id">
+												Detay
+												<i class="bi bi-arrow-right ms-2"></i>
+											</a>
+										</div>
+									</div> *@
+								</article>
+							</div>
+							<script type="application/ld+json">
+								{
+									"@@context": "https://schema.org",
+									"@@type": "Projelerimiz",
+									"name": "@project.Name",
+									"image": "@project.Image",
+									"url": "@Url.Action("Detail", "Project", new { Id = project.Id }, Context.Request.Scheme)",
+									"brand": {
+										"@@type": "Brand",
+										"name": "Express Bilgisyar"
+									}
+								}
+							</script>
+						}
+					}
+				</div>
+			</div>
+		</section>
+
+		<section id="blog-pagination" class="blog-pagination section">
+			<div class="container">
+				<div class="d-flex justify-content-center">
+					<ul>
+						@for (int i = start; i <= end; i++)
+						{
+							if (i == Model.Page)
+							{
+								<li><a class="active" href="#">@i</a></li>
+							}
+							else
+							{
+								<li><a href="@Url.Action("List", new { page = i })">@i</a></li>
+							}
+						}
+
+						@if (end < Model.PageCount)
+						{
+							<li>...</li>
+							<li><a href="@Url.Action("List", new { page = Model.PageCount })">@Model.PageCount</a></li>
+						}
+					</ul>
+				</div>
+			</div>
+		</section>
+	</div>
+</div>

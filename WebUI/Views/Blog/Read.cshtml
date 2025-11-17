@@ -1,0 +1,78 @@
+﻿@using Model.Entities
+@model Blog
+@{
+	ViewData["Title"] = "Blog Detay";
+}
+
+<div class="page-title">
+	<nav class="breadcrumbs">
+		<div class="container">
+			<ol>
+				<li><a href="/">Ana sayfa</a></li>
+				<li class="current">Blog Detay</li>
+			</ol>
+		</div>
+	</nav>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<!-- Blog Details Section -->
+			<section id="blog-details" class="blog-details section">
+				<div class="container">
+
+					<article class="article">
+
+						<div class="post-img">
+							<img src="@Model.Image" alt="" class="img-fluid">
+						</div>
+
+						<h2 class="title">
+							@Model.Title
+						</h2>
+
+						<div class="meta-top">
+							<ul>
+								@if (Model.Author != null)
+								{
+									<li class="d-flex align-items-center">
+										<i class="bi bi-person"></i>
+										<a href="blog-details.html">@Model.Author.FullName</a>
+									</li>
+								}
+								@if (Model.CreateDateUtc.HasValue)
+								{
+									<li class="d-flex align-items-center">
+										<i class="bi bi-clock"></i>
+										<time datetime="2020-01-01">@(Model.CreateDateUtc.Value.ToLocalTime().ToShortDateString())</time>
+									</li>
+								}
+							</ul>
+						</div>
+
+						<div class="content">
+							@Html.Raw(Model.Content)
+						</div>
+
+						<div class="meta-bottom">
+							<i class="bi bi-folder"></i>
+							<ul class="cats">
+								<li><a href="#">Express Bilgisayar</a></li>
+							</ul>
+
+							<i class="bi bi-tags"></i>
+							<ul class="tags">
+								<li><a href="#">Blog</a></li>
+								<li><a href="#">Makale</a></li>
+								<li><a href="#">Kiosk</a></li>
+								<li><a href="#">Atm</a></li>
+								<li><a href="#">Network</a></li>
+							</ul>
+						</div>
+					</article>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>

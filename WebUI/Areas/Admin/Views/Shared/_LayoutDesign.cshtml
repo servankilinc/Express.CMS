@@ -1,0 +1,77 @@
+@using WebUI.Utils.ActionFilters
+@using WebUI.Utils.Extensions
+@{
+	var currentUrl = Context.GetUrl();
+	var lightMode = Context.GetLightMode();
+}
+<!DOCTYPE html>
+<html class="@(lightMode == "dark" ? "dark-style" : "light-style") layout-menu-fixed layout-menu-expanded overflow-x-hidden"
+	  dir="ltr"
+	  data-theme="theme-default"
+	  data-style="light"
+	  lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<link rel="icon" type="image/x-icon" href="~/admin/assets/img/favicon/favicon.ico" />
+
+	<partial name="./Partials/_LayoutHeader" />
+
+	<script src="https://unpkg.com/@@grapesjs/studio-sdk/dist/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/tableComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/listPagesComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/swiperComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/iconifyComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/accordionComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/flexComponent/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/canvasEmptyState/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/canvasGridMode/index.umd.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@@grapesjs/studio-sdk-plugins@latest/dist/rteTinyMce/index.umd.js"></script>
+	<link rel="stylesheet" href="https://unpkg.com/@@grapesjs/studio-sdk/dist/style.css" />
+</head>
+<body>
+	<div class="content-wrapper">
+		@RenderBody()
+		<div class="content-backdrop fade"></div>
+	</div>
+
+	<partial name="./Partials/_LayoutScripts" />
+	<script>
+		const licenseKey = '@(ViewBag.GapesJSLicenseKey != null ? Html.Raw(ViewBag.GapesJSLicenseKey) : "demo")';
+		const ligthMode = '@(lightMode == "dark" ? "dark" : "light")';
+
+
+		const cssLinks = [
+			"https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css",
+			"https://fonts.googleapis.com",
+			"https://fonts.gstatic.com",
+			"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+			"../../common/lib/bootstrap/dist/css/bootstrap.min.css",
+			"../../common/vendor/bootstrap-icons/bootstrap-icons.css",
+			"../../common/vendor/glightbox/css/glightbox.min.css",
+			"../../common/vendor/swiper/swiper-bundle.min.css",
+			"../../common/css/main.css"
+		];
+
+		const jsLinks = [
+			"../../common/lib/jquery/dist/jquery.min.js",
+			"../../common/lib/jquery-validation/dist/jquery.validate.min.js",
+			"../../common/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js",
+			"../../common/lib/bootstrap/dist/js/bootstrap.bundle.min.js",
+			"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/js/all.min.js",
+			"../../common/vendor/aos/aos.js",
+			"../../common/vendor/glightbox/js/glightbox.min.js",
+			"../../common/vendor/purecounter/purecounter_vanilla.js",
+			"../../common/vendor/imagesloaded/imagesloaded.pkgd.min.js",
+			"../../common/vendor/isotope-layout/isotope.pkgd.min.js",
+			"../../common/vendor/swiper/swiper-bundle.min.js",
+			"../../common/js/site.js",
+			"../../common/js/main.js"
+		];
+
+	</script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

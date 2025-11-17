@@ -1,0 +1,94 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Company_
+@model CompanyCreateViewModel
+@{
+    Layout = null;
+}
+
+<form asp-controller="Company" asp-action="Create" method="post" enctype="multipart/form-data" id="formCreateCompany">
+    <div class="row row-gap-4 m-2">
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Since" class="form-label">
+                Kuruluş Yılı
+            </label>
+            <input asp-for="CreateModel.Since" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Since" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Address" class="form-label">
+                Addresler (',' ile ayırınız)
+            </label>
+            <input asp-for="CreateModel.Address" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Address" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.EmailAdresses" class="form-label">
+                Email Adresleri (',' ile ayırınız)
+            </label>
+            <input asp-for="CreateModel.EmailAdresses" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.EmailAdresses" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.PhoneNumbers" class="form-label">
+                Telefon Numaraları (',' ile ayırınız)
+            </label>
+            <input asp-for="CreateModel.PhoneNumbers" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.PhoneNumbers" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.FaxNumbers" class="form-label">
+                Fax Numaraları (Opsiyonel) (',' ile ayırınız)
+            </label>
+            <input asp-for="CreateModel.FaxNumbers" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.FaxNumbers" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.WorkingStartTime" class="form-label">
+                Çalışma Başlangıç Saati
+            </label>
+            <input asp-for="CreateModel.WorkingStartTime" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.WorkingStartTime" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.WorkingEndTime" class="form-label">
+                Çalışma Bitiş Saati
+            </label>
+            <input asp-for="CreateModel.WorkingEndTime" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.WorkingEndTime" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Latitude" class="form-label">
+                Latitude
+            </label>
+            <input asp-for="CreateModel.Latitude" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Latitude" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.Longitude" class="form-label">
+                Longitude
+            </label>
+            <input asp-for="CreateModel.Longitude" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.Longitude" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.GapesJSLicenseKey" class="form-label">
+                Gapes JS Lisans Anahtarı
+            </label>
+            <input asp-for="CreateModel.GapesJSLicenseKey" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.GapesJSLicenseKey" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CreateModel.CKEditorLicenseKey" class="form-label">
+                CK Editör Lisans Anahtarı
+            </label>
+            <input asp-for="CreateModel.CKEditorLicenseKey" type="text" class="form-control" />
+            <span asp-validation-for="CreateModel.CKEditorLicenseKey" class="form_validation_feedback"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="CreateModel.ImageFile" class="form-label">
+                Logo
+            </label>
+            <input asp-for="CreateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+            <span asp-validation-for="CreateModel.ImageFile" class="form_validation_feedback"></span>
+        </div>
+    </div>
+</form>

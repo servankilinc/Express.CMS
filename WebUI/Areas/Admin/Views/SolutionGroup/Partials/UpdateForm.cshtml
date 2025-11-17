@@ -1,0 +1,25 @@
+@using WebUI.Areas.Admin.Models.ViewModels.SolutionGroup_
+@model SolutionGroupUpdateViewModel
+@{
+	Layout = null;
+}
+
+<form asp-controller="SolutionGroup" asp-action="Update" method="post">
+	<div class="row row-gap-4 m-2">
+		<input asp-for="UpdateModel.Id" type="hidden" />
+		<div class="col-md-6">
+			<label asp-for="UpdateModel.Name" class="form-label">
+				Ürün Grup İsmi
+			</label>
+			<input asp-for="UpdateModel.Name" type="text" class="form-control" />
+			<span asp-validation-for="UpdateModel.Name" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="UpdateModel.PathName" class="form-label">
+				Path Bilgisi
+			</label>
+			<input asp-for="UpdateModel.PathName" type="text" class="form-control" />
+			<span asp-validation-for="UpdateModel.PathName" class="form_validation_feedback"></span>
+		</div>
+	</div>
+</form>

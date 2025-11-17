@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <partial name="./Partials/_LayoutHeader" />
+
+    @RenderSection("HeadContent", required: false)
+</head>
+<body>
+    @await Component.InvokeAsync("Header")
+
+    <main role="main" class="main">
+        @RenderBody()
+    </main>
+
+    @await Component.InvokeAsync("Footer")
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <partial name="./Partials/_LayoutScripts" />
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

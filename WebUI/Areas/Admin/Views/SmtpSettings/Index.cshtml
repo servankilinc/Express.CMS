@@ -1,0 +1,102 @@
+﻿@using Model.Entities
+@model SmtpSettings
+@{
+	ViewData["Title"] = "Smtp Ayarları";
+}
+
+<div class="card"> 
+	<div class="card-body">
+
+        <form asp-controller="SmtpSettings" asp-action="Update" method="post" id="formUpdateSmtp">
+            <div class="row row-gap-4 m-2">
+                <input asp-for="Id" type="hidden" />
+                <div class="col-md-6">
+                    <label asp-for="EmailAddress" class="form-label">
+                        E-posta Adresi (NoReply)
+                    </label>
+                    <input asp-for="EmailAddress" type="text" class="form-control" />
+                    <span asp-validation-for="EmailAddress" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="InformationEmailAddress" class="form-label">
+                        E-posta Adresi (Alıcı)
+                    </label>
+                    <input asp-for="InformationEmailAddress" type="text" class="form-control" />
+                    <span asp-validation-for="InformationEmailAddress" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="IncomingServerHost" class="form-label">
+                        Gelen Sunucu
+                    </label>
+                    <input asp-for="IncomingServerHost" type="text" class="form-control" />
+                    <span asp-validation-for="IncomingServerHost" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OutgoingServerHost" class="form-label">
+                        Giden Sunucu
+                    </label>
+                    <input asp-for="OutgoingServerHost" type="text" class="form-control" />
+                    <span asp-validation-for="OutgoingServerHost" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="IncomingServerPort" class="form-label">
+                        Gelen Sunucu Port
+                    </label>
+                    <input asp-for="IncomingServerPort" type="text" class="form-control" />
+                    <span asp-validation-for="IncomingServerPort" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OutgoingServerPort" class="form-label">
+                        Giden Sunucu Port
+                    </label>
+                    <input asp-for="OutgoingServerPort" type="text" class="form-control" />
+                    <span asp-validation-for="OutgoingServerPort" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Password" class="form-label">
+                        Şifre
+                    </label>
+                    <input asp-for="Password" type="text" class="form-control" />
+                    <span asp-validation-for="Password" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SslEnable" class="form-label">
+                        Ssl Aktif mi?
+                    </label>
+                    @if(Model.SslEnable == true){
+                        <input name="SslEnable" value="@Model.SslEnable" type="checkbox" checked class="form-check-input" />
+                    }
+                    else
+                    {
+                        <input name="SslEnable" value="@Model.SslEnable" type="checkbox" class="form-check-input" />
+                    } 
+                    <span asp-validation-for="SslEnable" class="form_validation_feedback"></span>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="button" onclick="SendSmtpForm(this)" >
+                        Kaydet
+                    </button>
+                </div>
+            </div>
+        </form>
+	</div>
+</div>
+ 
+
+
+@section Scripts {
+    <script>
+        function SendSmtpForm(e_btn){
+            let form = $("#formUpdateSmtp");
+            RequestManager.Post({
+                path: form.attr("action"),
+                requestData: form.serializeArray(),
+                buttonElement: e_btn,
+                waitToastr: true,
+                onSuccess: () => {
+                     window.location.reload();
+                }
+            })
+        }
+    </script>
+}

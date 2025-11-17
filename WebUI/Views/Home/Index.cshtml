@@ -1,0 +1,41 @@
+﻿ 
+@* <partial name="./Sections/_hero" />
+<partial name="./Sections/_about" />
+<partial name="./Sections/_values" />
+<partial name="./Sections/_stats" />
+<partial name="./Sections/_features" />
+<partial name="./Sections/_altFeatures" />
+ *@@* <partial name="./Sections/_services" /> *@
+@* <partial name="./Sections/_portfolio" />
+<partial name="./Sections/_clients" />
+<partial name="./Sections/_recentPosts" />
+<partial name="./Sections/_contact" /> *@
+
+
+@using WebUI.Models.ViewModels
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+@if (Model.Sections != null)
+{
+    @foreach (var home_section in Model.Sections.OrderBy(s => s.Priority))
+    {
+        <div id="section-@home_section.Id">
+            <style>
+                @Html.Raw(home_section.DesignModel?.Css)
+            </style>
+
+            @Html.Raw(home_section.DesignModel?.Html)
+
+            <script>
+                @Html.Raw(home_section.DesignModel?.Script)
+            </script>
+        </div>
+    }
+}
+
+@await Component.InvokeAsync("RecentBlogs")
+@await Component.InvokeAsync("References")
+@await Component.InvokeAsync("Contact")

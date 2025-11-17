@@ -1,0 +1,74 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Page_
+@model PageCreateViewModel
+@{
+	Layout = "_LayoutDesignCreate";
+	ViewData["Title"] = "Sayfa Ekle";
+}
+
+<form asp-controller="Page" asp-action="Create" method="post" id="formCreatePage">
+	<input asp-for="CreateModel.ShowFooter" type="hidden"/>
+	<input asp-for="CreateModel.DesignCreateModel.Id" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Html" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Css" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Script" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.ProjectJson" type="hidden" />
+	<div class="row row-gap-4 m-2">
+		<div class="col-md-6">
+			<label asp-for="CreateModel.Name" class="form-label">
+				İsim
+			</label>
+			<input asp-for="CreateModel.Name" type="text" class="form-control" />
+			<span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="CreateModel.PathName" class="form-label">
+				Sayfa Uzantısı
+			</label>
+			<input asp-for="CreateModel.PathName" type="text" class="form-control" />
+			<span style="font-size:12px">Türkçe karakter kullamamya özen gösteriniz.</span>
+			<span asp-validation-for="CreateModel.PathName" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-md-6">
+			<label asp-for="CreateModel.ShowFooter" class="form-label d-block w-100">
+				Footer'da Gösterilsin mi?
+			</label>
+			<label class="switch">
+				<input id="temp_check_ShowFooter" type="checkbox" class="switch-input" />
+				<span class="switch-toggle-slider">
+					<span class="switch-on"></span>
+					<span class="switch-off"></span>
+				</span> 
+			</label>
+
+			<span asp-validation-for="CreateModel.ShowFooter" class="form_validation_feedback"></span>
+		</div>
+	</div>
+</form>
+
+
+@section Scripts {
+	<script>
+		designIdToCreate = '@Html.Raw(Model.CreateModel.DesignCreateModel?.Id)';
+
+		document.getElementById('save-btn').addEventListener('click', () => {
+			// Myeditor.store();
+			const html = Myeditor.getHtml();
+			const css = Myeditor.getCss();
+			const js = Myeditor.getJs();
+			const project = Myeditor.getProjectData();
+
+			$("input[name='CreateModel.DesignCreateModel.Html']").val(html);
+			$("input[name='CreateModel.DesignCreateModel.Css']").val(css);
+			$("input[name='CreateModel.DesignCreateModel.Script']").val(js);
+			$("input[name='CreateModel.DesignCreateModel.ProjectJson']").val(JSON.stringify(project));
+
+			$("#formCreatePage").submit();
+		});
+	</script>
+
+	<script>
+		$("#temp_check_ShowFooter").on("change", function(e) {
+			$("input[name='CreateModel.ShowFooter']").val(e.target.checked ? "true" : "false");
+		})
+	</script>
+}

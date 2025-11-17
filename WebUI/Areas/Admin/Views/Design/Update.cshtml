@@ -1,0 +1,169 @@
+﻿@using WebUI.Areas.Admin.Models.ViewModels.Design_
+@model DesignUpdateViewModel
+@{
+	Layout = "_LayoutDesign";
+	ViewData["Title"] = "Tasarım Düzenle";
+}
+
+<div class="card">
+	<div class="card-body" style="position: relative;">
+		<form asp-controller="Design" asp-action="Update" method="post" enctype="multipart/form-data" id="formUpdateDesign">
+			<input asp-for="UpdateModel.ReturnUrl" type="hidden" />
+			<input asp-for="UpdateModel.Id" type="hidden" />
+			<input asp-for="UpdateModel.Html" type="hidden" />
+			<input asp-for="UpdateModel.Css" type="hidden" />
+			<input asp-for="UpdateModel.Script" type="hidden" />
+			<input asp-for="UpdateModel.ProjectJson" type="hidden" />
+		</form>
+
+		<div id="studio-editor" style="min-height: 100dvh; border-radius: 18px; margin: 0 30px;"></div>
+
+		<button id="save-btn" class="btn btn-primary" style="position: absolute; bottom: 10px; right: 10px; z-index: 999; padding: 10px; font-size: 16px;">
+			Kaydet 💾
+		</button>
+	</div>
+</div>
+
+
+
+@section Scripts {
+
+	<script>
+		var allowSave = false;
+
+		var designIdToUpdate = '@Html.Raw(Model.UpdateModel.Id)';
+
+		var Myeditor = null;
+		GrapesJsStudioSDK.createStudioEditor({
+			root: '#studio-editor',
+			licenseKey: licenseKey,
+			theme: ligthMode,
+			project: {
+				type: 'web',
+			},
+			// tasarım yönetim alanı
+			storage: {
+				type: 'self',
+				autosave: false,
+				autosaveChanges: 99999999,
+				onSave: async ({ project, editor }) => {
+					if (allowSave == false) return;
+					allowSave = false;
+
+					const html = editor.getHtml();
+					const css = editor.getCss();
+					const js = editor.getJs();
+
+					$("input[name='UpdateModel.Html']").val(html);
+					$("input[name='UpdateModel.Css']").val(css);
+					$("input[name='UpdateModel.Script']").val(js);
+					$("input[name='UpdateModel.ProjectJson']").val(JSON.stringify(project));
+
+					$("#formUpdateDesign").submit();
+				},
+				onLoad: async ({ editor}) => {
+					Myeditor = editor;
+
+					// referance import
+					editor.once('load', () => {
+						const iframe = editor.Canvas.getFrameEl();
+						if (!iframe) return;
+
+						const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+						if (!iframeDoc) return;
+
+						const head = iframeDoc.head;
+
+						// cssLinks from layout
+						cssLinks.forEach(href => {
+							const link = document.createElement('link');
+							link.rel = 'stylesheet';
+							link.href = href;
+							head.appendChild(link);
+						});
+
+						// jsLinks from layout
+						jsLinks.forEach(src => {
+							const script = document.createElement('script');
+							script.src = src;
+							head.appendChild(script);
+						});
+					});
+
+
+					const existProject = @(Json.Serialize(Model.UpdateModel.ProjectJson));
+					const project = JSON.parse(existProject);
+					return { project };
+				},
+			},
+			// dosya yönetim alanı
+			assets: {
+				storageType: 'self',
+				onUpload: async ({ files, editor }) => {
+					let formData = new FormData();
+					formData.append("designId", designIdToUpdate);
+
+					for (const file of files) {
+						formData.append("file", file);
+					}
+
+					const response = await fetch('/Admin/Design/FileUpload', {
+						method: 'POST',
+						body: formData
+					});
+
+					const results = await response.json();
+
+					return results.map(item => ({
+						id: item.name,
+						src: item.url,
+						name: item.name,
+						mimeType: item.type,
+						size: item.size
+					}));
+				},
+				onDelete: async ({ assets, editor }) => {
+					for (const asset of assets) {
+						let formData = new FormData();
+						formData.append("designId", designIdToUpdate);
+						formData.append("fileName", asset.attributes.name);
+
+						const response = await fetch('/Admin/Design/FileDelete', {
+							method: 'POST',
+							body: formData
+						});
+					}
+				},
+				onLoad: async () => {
+					const response = await fetch(`/Admin/Design/FileList?designId=${designIdToUpdate}`);
+					const results = await response.json();
+
+					return results.map(item => ({
+						id: item.name,
+						src: item.url,
+						name: item.name,
+						type: item.type,
+						mimeType: item.type,
+						size: item.size
+					}));
+				},
+			},
+			plugins: [
+				StudioSdkPlugins_tableComponent.init({}),
+				StudioSdkPlugins_listPagesComponent.init({}),
+				StudioSdkPlugins_swiperComponent.init({}),
+				StudioSdkPlugins_iconifyComponent.init({}),
+				StudioSdkPlugins_accordionComponent.init({}),
+				StudioSdkPlugins_flexComponent.init({}),
+				StudioSdkPlugins_canvasEmptyState.init({}),
+				StudioSdkPlugins_canvasGridMode.init({}),
+				StudioSdkPlugins_rteTinyMce.init({})
+			]
+		});
+
+		document.getElementById('save-btn').addEventListener('click', () => {
+		  allowSave = true;
+		  Myeditor.store();
+		});
+	</script>
+}

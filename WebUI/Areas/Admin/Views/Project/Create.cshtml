@@ -1,0 +1,51 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Project_
+@model ProjectCreateViewModel
+@{
+	Layout = "_LayoutDesignCreate";
+	ViewData["Title"] = "Proje Ekle";
+}
+
+<form asp-controller="Project" asp-action="Create" method="post" enctype="multipart/form-data" id="formCreateProject" class="w-100">
+	<input asp-for="CreateModel.DesignCreateModel.Id" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Html" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Css" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.Script" type="hidden" />
+	<input asp-for="CreateModel.DesignCreateModel.ProjectJson" type="hidden" />
+	<div class="row row-gap-4 m-2">
+		<div class="col-md-6">
+			<label asp-for="CreateModel.Name" class="form-label">
+				İsim
+			</label>
+			<input asp-for="CreateModel.Name" type="text" class="form-control" />
+			<span asp-validation-for="CreateModel.Name" class="form_validation_feedback"></span>
+		</div>
+		<div class="col-12">
+			<label asp-for="CreateModel.ImageFile" class="form-label">
+				Görsel
+			</label>
+			<input asp-for="CreateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+			<span asp-validation-for="CreateModel.ImageFile" class="form_validation_feedback"></span>
+		</div>
+	</div>
+</form>
+
+@section Scripts {
+	<script>
+		designIdToCreate = '@Html.Raw(Model.CreateModel.DesignCreateModel?.Id)';
+
+		document.getElementById('save-btn').addEventListener('click', () => {
+			// Myeditor.store();
+			const html = Myeditor.getHtml();
+			const css = Myeditor.getCss();
+			const js = Myeditor.getJs();
+			const project = Myeditor.getProjectData();
+
+			$("input[name='CreateModel.DesignCreateModel.Html']").val(html);
+			$("input[name='CreateModel.DesignCreateModel.Css']").val(css);
+			$("input[name='CreateModel.DesignCreateModel.Script']").val(js);
+			$("input[name='CreateModel.DesignCreateModel.ProjectJson']").val(JSON.stringify(project));
+
+			$("#formCreateProject").submit();
+		});
+	</script>
+}

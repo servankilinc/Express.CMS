@@ -1,0 +1,60 @@
+@using WebUI.Areas.Admin.Models.ViewModels.Blog_
+@model BlogCreateViewModel
+@{
+	Layout = "_LayoutEditor";
+	ViewData["Title"] = "Blog Oluştur";
+}
+
+<div class="card">
+	<div class="card-header">
+		Yeni Blog Oluştur
+	</div>
+	<div class="card-body">
+		<form asp-controller="Blog" asp-action="Create" method="post" enctype="multipart/form-data" id="formCreateBlog">
+			<div class="row row-gap-4 m-2">
+				<div class="col-md-6">
+					<label asp-for="CreateModel.AuthorId" class="form-label">
+						Yazar
+					</label>
+					<select asp-for="CreateModel.AuthorId" asp-items="Model.AuthorList" class="autoInitSelect2 form-select">
+						<option></option>
+					</select>
+					<span asp-validation-for="CreateModel.AuthorId" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-md-6">
+					<label asp-for="CreateModel.Title" class="form-label">
+						Başlık
+					</label>
+					<input asp-for="CreateModel.Title" type="text" class="form-control" />
+					<span asp-validation-for="CreateModel.Title" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12">
+					<label asp-for="CreateModel.ImageFile" class="form-label">
+						Görsel
+					</label>
+					<input asp-for="CreateModel.ImageFile" type="file" class="form-control" accept="image/*" required />
+					<span asp-validation-for="CreateModel.ImageFile" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12 my-5">
+					<div class="main-container">
+						<div class="editor-container editor-container_classic-editor editor-container_include-style
+							editor-container_include-block-toolbar editor-container_include-word-count editor-container_include-fullscreen"
+							 id="editor-container">
+							<div class="editor-container__editor">
+								<textarea id="editor" asp-for="CreateModel.Content"></textarea>
+							</div>
+							<div class="editor_container__word-count" id="editor-word-count"></div>
+						</div>
+					</div>
+					<span asp-validation-for="CreateModel.Content" class="form_validation_feedback"></span>
+				</div>
+				<div class="col-12">
+					<button type="submit" class="btn btn-lg btn-success">
+						<i class="fa-solid fa-floppy-disk me-2"></i>
+						Kaydet
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>

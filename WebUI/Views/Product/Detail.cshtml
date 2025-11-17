@@ -1,0 +1,104 @@
+﻿@using Model.Dtos.Product_
+@model ProductDto
+
+@section HeadContent {
+	<script type="application/ld+json">
+		{
+		  "@@context": "https://schema.org/",
+		  "@@type": "Product",
+		  "name": "@Model.Name",
+		  "image": ["@Model.Image"],
+		  "description": "@Model.Description",
+		  "sku": "@Model.Id",
+		  "brand": {
+			"@@type": "Brand",
+			"name": "Express Bilgisayar"
+		  }
+		}
+	</script>
+}
+
+
+<div class="page-title">
+	<nav class="breadcrumbs py-4">
+		<div class="container">
+			<ol>
+				<li><a href="/">Ana sayfa</a></li>
+				<li class="current">Ürün Detay</li>
+			</ol>
+		</div>
+	</nav>
+</div>
+
+<section id="blog-details" class="blog-details section pb-5">
+	<div class="container-lg">
+
+		<article>
+
+			<div class="post-img" style="height: 40vh; ">
+				<img src="@Model.Image" alt="@Model.Name" style="width: 100%; height: 100%; object-fit: contain;">
+			</div>
+
+@* 			<h2 class="title">
+				@Model.Name
+			</h2> *@
+
+			<div class="content pb-5">
+				<style>
+					@Html.Raw(Model.Design?.Css)
+				</style>
+
+				@Html.Raw(Model.Design?.Html)
+
+				<script>
+					@Html.Raw(Model.Design?.Script)
+				</script>
+
+
+
+				@if(Model.DetailSections != null && Model.DetailSections.Any())
+				{
+
+					<div class="accordion" id="accordionProductDetail">
+						@foreach (var detailSection in Model.DetailSections)
+						{
+							<div class="accordion-item">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@detailSection.Id" aria-expanded="false" aria-controls="@detailSection.Id">
+										@detailSection.Title
+									</button>
+								</h2>
+								<div id="@detailSection.Id" class="accordion-collapse collapse" data-bs-parent="#accordionProductDetail">
+									<div class="accordion-body" style="overflow: auto;">
+										<style>
+											@Html.Raw(detailSection.Design?.Css)
+										</style>
+
+										@Html.Raw(detailSection.Design?.Html)
+
+										<script>
+											@Html.Raw(detailSection.Design?.Script)
+										</script>
+
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				}
+			</div>
+
+			<div class="meta-bottom">
+				<i class="bi bi-folder"></i>
+				<ul class="cats">
+					<li><a href="#">Express Bilgisayar</a></li>
+				</ul>
+
+				<i class="bi bi-tags"></i>
+				<ul class="tags">
+					<li><a href="#">@Model.Name</a></li>
+				</ul>
+			</div>
+		</article>
+	</div>
+</section>
