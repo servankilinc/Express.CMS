@@ -1,3 +1,4 @@
+using Core.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using System.Security.Claims;
@@ -34,19 +35,25 @@ public class HttpContextManager
         var appPlatform = _httpContextAccessor.HttpContext.Request.Headers["X-App-Platform"];
         return appPlatform.ToString().ToLowerInvariant() == "mobile".ToLowerInvariant();
     }
-    public string GetCultureFromCookie()
+    public string GetCurrentCulture()
     {
-        if (_httpContextAccessor.HttpContext == null) throw new Exception("Not exist HttpContext inside HttpContextManager.GetRefreshTokenFromCookie!");
+        string defaultCulture = "tr-TR";
+        if (_httpContextAccessor.HttpContext == null) return defaultCulture;
         var cookieName = CookieRequestCultureProvider.DefaultCookieName;
 
         var cookieValue = _httpContextAccessor.HttpContext.Request.Cookies[cookieName];
-        if (string.IsNullOrEmpty(cookieValue)) throw new Exception("Not exist culture information inside cookie!");
+        if (string.IsNullOrEmpty(cookieValue)) return defaultCulture;
 
-        
+
         var requestCulture = CookieRequestCultureProvider.ParseCookieValue(cookieValue);
         var cultureInfo = requestCulture?.Cultures.FirstOrDefault().Value;
-        if (string.IsNullOrEmpty(cultureInfo)) throw new Exception("Not exist culture information inside cookie!");
+        if (string.IsNullOrEmpty(cultureInfo)) return defaultCulture;
         return cultureInfo;
+    }
+    public int GetCurrentLanguageId()
+    {
+        string cultureInfo = GetCurrentCulture();
+        return (byte)EnumExtensions.GetEnumByDescription<Languages>(cultureInfo);
     }
     public void AddRefreshTokenToCookie(string refreshToken, DateTime expirationUtc)
     {
