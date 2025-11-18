@@ -1,49 +1,25 @@
-﻿using Core.Enums;
-using Core.Model;
-using Core.Utils.CrossCuttingConcerns.Attributes;
+﻿using Core.Model;
 using Core.Utils.HttpContextManager;
+using Core.Utils.Localization;
 using DataAccess.Interceptors.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Model.ProjectEntities;
-using Serilog;
-using System;
+using System.Reflection;
 
 namespace DataAccess.Interceptors;
-
-//public sealed class LocalizationQueryInterceptor : IMaterializationInterceptor
-//{
-//    private readonly HttpContextManager _httpContextManager;
-//    public LocalizationQueryInterceptor(HttpContextManager httpContextManager) => _httpContextManager = httpContextManager;
-
-//    public object InitializedInstance(MaterializationInterceptionData materializationData, object entity)
-//    {
-//        if (entity is ILocalizableEntity)
-//        {
-//            var localizableProps = entity.GetType().GetProperties().Where(p => p.PropertyType == typeof(string) && Attribute.IsDefined(p, typeof(LocalizablePropAttribute)));
-//            if (localizableProps.Any())
-//            {
-//                foreach (var prop in localizableProps)
-//                {
-//                    var originalValue = prop.GetValue(entity) as string;
-//                    if (!string.IsNullOrEmpty(originalValue))
-//                    {
-//                        var localizedValue = originalValue;  // loaclization servisinden gelecek 
-//                        prop.SetValue(entity, localizedValue);
-//                    }
-//                }
-//            }
-//        }
-//        return entity;
-//    }
-//}
 
 
 public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
 {
     private readonly HttpContextManager _httpContextManager;
-    public LocalizationCommandInterceptor(HttpContextManager httpContextManager) => _httpContextManager = httpContextManager;
+    private readonly LocalizationHelper _localizationHelper;
+    public LocalizationCommandInterceptor(HttpContextManager httpContextManager, LocalizationHelper localizationHelper)
+    {
+        _httpContextManager = httpContextManager;
+        _localizationHelper = localizationHelper;
+    }
 
 
     //  ****************************** SYNC VERSION ******************************
@@ -53,29 +29,34 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
 
         var localizableEntries = eventData.Context.ChangeTracker.Entries<ILocalizableEntity>().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
 
-        if (!localizableEntries.Any()) return base.SavingChanges(eventData, result);
+        if (localizableEntries.Any())
+            ProcessLocalization(eventData.Context, localizableEntries);
 
+        return base.SavingChanges(eventData, result);
+    }
+    private void ProcessLocalization(DbContext context, IEnumerable<EntityEntry<ILocalizableEntity>> localizableEntries)
+    {
         var languageId = _httpContextManager.GetCurrentLanguageId();
-        var localizationSet = eventData.Context.Set<Localization>();
-        var langDetailSet = eventData.Context.Set<LocalizationLanguageDetail>();
+        var localizationSet = context.Set<Localization>();
+        var langDetailSet = context.Set<LocalizationLanguageDetail>();
 
         foreach (EntityEntry<ILocalizableEntity> entry in localizableEntries)
         {
-            var localizableProps = entry.Entity.GetType().GetProperties().Where(p => p.PropertyType == typeof(string) && Attribute.IsDefined(p, typeof(LocalizablePropAttribute)));
-            if (!localizableProps.Any()) continue;
+            var localizableProps = GetLocalizableProps(entry);
 
             foreach (var prop in localizableProps)
             {
                 // 1) Mevcutta gelen değeri al
-                var originalValue = prop.GetValue(entry) as string;
-                if (string.IsNullOrEmpty(originalValue)) continue;
+                var originalValue = prop.GetValue(entry.Entity) as string;
+                if (string.IsNullOrWhiteSpace(originalValue)) continue;
 
                 // 2) Key bilgi attr ile geliyorsa kullan yoksa oluştur
                 var attr = (LocalizablePropAttribute?)prop.GetCustomAttributes(typeof(LocalizablePropAttribute), false).FirstOrDefault();
-                var key = attr?.Key ?? GenerateLocalizationKey(entry.GetTableName(), prop.Name, entry.GetEntityId());
+                var key = attr?.Key ?? _localizationHelper.GenerateLocalizationKey(entry.GetTableName(), prop.Name, entry.GetEntityId());
 
                 // 3) Mevcutta bu key'e ait bir localization var mı kontrol et
-                var existLocalization = localizationSet.Include(i => i.LocalizationLanguageDetails).SingleOrDefault(f => f.Key == key);
+                var existLocalization = localizationSet.Include(i => i.LocalizationLanguageDetails).FirstOrDefault(f => f.Key == key);
+
                 Guid localizationId;
 
                 // 4) Varsa ilgili dildeki değeri güncelle yoksa yeni kayıt oluştur
@@ -88,7 +69,7 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                     if (existLanguageLocalization != null)
                     {
                         existLanguageLocalization.Value = originalValue;
-                        langDetailSet.Update(existLanguageLocalization);
+                        context.Entry(existLanguageLocalization).State = EntityState.Modified;
                     }
                     // b) localizasyon bilgisi var fakat aktif dilde kaydı yoksa
                     else
@@ -122,11 +103,10 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                 }
 
                 // 5) Entity üzerindeki değeri key ile değiştir
-                prop.SetValue(entry.Entity, key);
+                entry.Property(prop.Name).CurrentValue = key;
+                entry.Property(prop.Name).IsModified = true;
             }
         }
-
-        return base.SavingChanges(eventData, result);
     }
 
 
@@ -137,29 +117,34 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
 
         var localizableEntries = eventData.Context.ChangeTracker.Entries<ILocalizableEntity>().Where(e => e.State == EntityState.Added || e.State == EntityState.Modified).ToList();
 
-        if (!localizableEntries.Any()) return await base.SavingChangesAsync(eventData, result, cancellationToken);
+        if (localizableEntries.Any())
+            await ProcessLocalizationsAsync(eventData.Context, localizableEntries, cancellationToken);
 
+        return await base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+    private async Task ProcessLocalizationsAsync(DbContext context, List<EntityEntry<ILocalizableEntity>> localizableEntries, CancellationToken cancellationToken)
+    {
         var languageId = _httpContextManager.GetCurrentLanguageId();
-        var localizationSet = eventData.Context.Set<Localization>();
-        var langDetailSet = eventData.Context.Set<LocalizationLanguageDetail>();
+        var localizationSet = context.Set<Localization>();
+        var langDetailSet = context.Set<LocalizationLanguageDetail>();
 
         foreach (EntityEntry<ILocalizableEntity> entry in localizableEntries)
         {
-            var localizableProps = entry.Entity.GetType().GetProperties().Where(p => p.PropertyType == typeof(string) && Attribute.IsDefined(p, typeof(LocalizablePropAttribute)));
-            if (!localizableProps.Any()) continue;
+            var localizableProps = GetLocalizableProps(entry);
 
             foreach (var prop in localizableProps)
             {
                 // 1) Mevcutta gelen değeri al
-                var originalValue = prop.GetValue(entry) as string;
-                if (string.IsNullOrEmpty(originalValue)) continue;
+                var originalValue = prop.GetValue(entry.Entity) as string;
+                if (string.IsNullOrWhiteSpace(originalValue)) continue;
 
                 // 2) Key bilgi attr ile geliyorsa kullan yoksa oluştur
                 var attr = (LocalizablePropAttribute?)prop.GetCustomAttributes(typeof(LocalizablePropAttribute), false).FirstOrDefault();
-                var key = attr?.Key ?? GenerateLocalizationKey(entry.GetTableName(), prop.Name, entry.GetEntityId());
+                var key = attr?.Key ?? _localizationHelper.GenerateLocalizationKey(entry.GetTableName(), prop.Name, entry.GetEntityId());
 
                 // 3) Mevcutta bu key'e ait bir localization var mı kontrol et
-                var existLocalization = await localizationSet.Include(i => i.LocalizationLanguageDetails).SingleOrDefaultAsync(f => f.Key == key);
+                var existLocalization = await localizationSet.Include(i => i.LocalizationLanguageDetails).FirstOrDefaultAsync(f => f.Key == key, cancellationToken);
+
                 Guid localizationId;
 
                 // 4) Varsa ilgili dildeki değeri güncelle yoksa yeni kayıt oluştur
@@ -172,7 +157,7 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                     if (existLanguageLocalization != null)
                     {
                         existLanguageLocalization.Value = originalValue;
-                        await langDetailSet.AddAsync(existLanguageLocalization);
+                        context.Entry(existLanguageLocalization).State = EntityState.Modified;
                     }
                     // b) localizasyon bilgisi var fakat aktif dilde kaydı yoksa
                     else
@@ -182,7 +167,7 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                             LocalizationId = localizationId,
                             LanguageId = languageId,
                             Value = originalValue
-                        });
+                        }, cancellationToken);
                     }
                 }
                 else
@@ -196,27 +181,32 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                         TableName = entry.GetTableName(),
                         EntityId = entry.GetEntityId(),
                         Key = key
-                    });
+                    }, cancellationToken);
+
                     await langDetailSet.AddAsync(new LocalizationLanguageDetail
                     {
                         LocalizationId = localizationId,
                         LanguageId = languageId,
                         Value = originalValue
-                    });
+                    }, cancellationToken);
                 }
 
                 // 5) Entity üzerindeki değeri key ile değiştir
-                prop.SetValue(entry.Entity, key);
+                entry.Property(prop.Name).CurrentValue = key;
+                entry.Property(prop.Name).IsModified = true;
             }
         }
-
-        return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
-     
 
 
-    public string GenerateLocalizationKey(string? tableName, string? propertyName, string? entityId)
+    private List<PropertyInfo> GetLocalizableProps(EntityEntry<ILocalizableEntity> entry)
     {
-        return $"{tableName ?? "undefined"}_{propertyName ?? "undefined"}_{entityId ?? "undefined"}";
+        // İlgili entity üzerindeki localizable prop'ları bul ekleme işlemi ise bütün localizable prop'ları işle güncelleme ise sadece değişenleri işle
+        return entry.Entity.GetType().GetProperties().Where(p =>
+            p.PropertyType == typeof(string) &&
+            Attribute.IsDefined(p, typeof(LocalizablePropAttribute)) &&
+            p.GetValue(entry.Entity) != null &&
+            (entry.State == EntityState.Added || entry.Property(p.Name).IsModified)
+        ).ToList();
     }
 }

@@ -1,3 +1,4 @@
+using Core.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -357,6 +358,38 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid> //
             l.ToTable("ProjectLanguages");
 
             l.HasKey(l => l.Id);
+
+            l.HasData(
+                new Language
+                {
+                    Id = (byte)Core.Enums.Languages.Turkish,
+                    Name = "Türkçe",
+                    Code = "tr-TR",
+                    Icon = "tr.png",
+                    Priority = 1,
+                    ResourceFileName = "resources.tr.resx",
+                    ResourceFileVersion = 1
+                }, new Language
+                {
+                    Id = (byte)Core.Enums.Languages.English,
+                    Name = "English",
+                    Code = "en-US",
+                    Icon = "en.png",
+                    Priority = 2,
+                    ResourceFileName = "resources.en.resx",
+                    ResourceFileVersion = 1
+                },
+                new Language
+                {
+                    Id = (byte)Core.Enums.Languages.Russian,
+                    Name = "Russian",
+                    Code = "ru-RU",
+                    Icon = "ru.png",
+                    Priority = 3,
+                    ResourceFileName = "resources.ru.resx",
+                    ResourceFileVersion = 1
+                }
+            );
 
             l.HasMany(l => l.LocalizationLanguageDetails)
                 .WithOne(lld => lld.Language)

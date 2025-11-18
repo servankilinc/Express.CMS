@@ -6,14 +6,11 @@ using Core.Utils.Auth;
 using DataAccess;
 using DataAccess.Contexts;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.Extensions.Options;
 using Model;
 using Model.Entities;
-using Model.ProjectEntities;
 using Serilog;
 using Serilog.Filters;
 using System.Globalization;
@@ -67,7 +64,7 @@ builder.Services.AddRateLimiter(options =>
 
 
 // ------- Logger Implementation -------
-Log.Logger = new LoggerConfiguration()
+Serilog.Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
