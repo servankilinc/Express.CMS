@@ -358,6 +358,9 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ClientIp")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("CreateDateUtc")
                         .HasColumnType("datetime2");
 
@@ -384,6 +387,13 @@ namespace DataAccess.Migrations
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SendingStatus")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Subject")
                         .IsRequired()
@@ -716,6 +726,9 @@ namespace DataAccess.Migrations
                     b.Property<Guid?>("DesignId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("FriendlyUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -960,6 +973,46 @@ namespace DataAccess.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("Model.Entities.SmtpSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IncomingServerHost")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IncomingServerPort")
+                        .HasColumnType("int");
+
+                    b.Property<string>("InformationEmailAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OutgoingServerHost")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OutgoingServerPort")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("SslEnable")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SmtpSettings", (string)null);
+                });
+
             modelBuilder.Entity("Model.Entities.Solution", b =>
                 {
                     b.Property<Guid>("Id")
@@ -984,6 +1037,9 @@ namespace DataAccess.Migrations
 
                     b.Property<Guid?>("DesignId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FriendlyUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
                         .IsRequired()
@@ -1228,7 +1284,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EntityId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("RequesterId")
                         .HasColumnType("nvarchar(max)");
@@ -1241,7 +1297,117 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EntityId");
+
                     b.ToTable("ProjectArchives", (string)null);
+                });
+
+            modelBuilder.Entity("Model.ProjectEntities.Language", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ResourceFileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResourceFileVersion")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProjectLanguages", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "tr-TR",
+                            Icon = "tr.png",
+                            Name = "Türkçe",
+                            Priority = 1,
+                            ResourceFileName = "resources.tr.resx",
+                            ResourceFileVersion = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "en-US",
+                            Icon = "en.png",
+                            Name = "English",
+                            Priority = 2,
+                            ResourceFileName = "resources.en.resx",
+                            ResourceFileVersion = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "ru-RU",
+                            Icon = "ru.png",
+                            Name = "Russian",
+                            Priority = 3,
+                            ResourceFileName = "resources.ru.resx",
+                            ResourceFileVersion = 1
+                        });
+                });
+
+            modelBuilder.Entity("Model.ProjectEntities.Localization", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EntityId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TableName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EntityId");
+
+                    b.ToTable("ProjectLocalizations", (string)null);
+                });
+
+            modelBuilder.Entity("Model.ProjectEntities.LocalizationLanguageDetail", b =>
+                {
+                    b.Property<Guid>("LocalizationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("LocalizationId", "LanguageId");
+
+                    b.HasIndex("LanguageId");
+
+                    b.ToTable("ProjectLocalizationLanguageDetails", (string)null);
                 });
 
             modelBuilder.Entity("Model.ProjectEntities.Log", b =>
@@ -1265,7 +1431,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("EntityId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NewData")
                         .HasColumnType("nvarchar(max)");
@@ -1283,6 +1449,8 @@ namespace DataAccess.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EntityId");
 
                     b.ToTable("ProjectLogs", (string)null);
                 });
@@ -1465,6 +1633,25 @@ namespace DataAccess.Migrations
                     b.Navigation("Menu");
                 });
 
+            modelBuilder.Entity("Model.ProjectEntities.LocalizationLanguageDetail", b =>
+                {
+                    b.HasOne("Model.ProjectEntities.Language", "Language")
+                        .WithMany("LocalizationLanguageDetails")
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Model.ProjectEntities.Localization", "Localization")
+                        .WithMany("LocalizationLanguageDetails")
+                        .HasForeignKey("LocalizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Localization");
+                });
+
             modelBuilder.Entity("Model.Entities.Design", b =>
                 {
                     b.Navigation("DetailSection");
@@ -1510,6 +1697,16 @@ namespace DataAccess.Migrations
                     b.Navigation("Blogs");
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Model.ProjectEntities.Language", b =>
+                {
+                    b.Navigation("LocalizationLanguageDetails");
+                });
+
+            modelBuilder.Entity("Model.ProjectEntities.Localization", b =>
+                {
+                    b.Navigation("LocalizationLanguageDetails");
                 });
 #pragma warning restore 612, 618
         }

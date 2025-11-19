@@ -28,7 +28,11 @@ public sealed class LocalizationQueryInterceptor : IMaterializationInterceptor
 
         foreach (var prop in localizableProps)
         {
-            var key = prop.GetValue(entity) as string;
+            //var key = prop.GetValue(entity) as string;
+            var attr = (LocalizablePropAttribute?)prop.GetCustomAttributes(typeof(LocalizablePropAttribute), false).FirstOrDefault();
+            if (attr == null) continue;
+
+            var key = attr.Key;
             if (string.IsNullOrWhiteSpace(key)) continue;
 
             var localizedValue = _localizationHelper.ResolveLocalizationValue(materializationData.Context, key, languageId);

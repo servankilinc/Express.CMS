@@ -102,9 +102,9 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                     });
                 }
 
-                // 5) Entity üzerindeki değeri key ile değiştir
-                entry.Property(prop.Name).CurrentValue = key;
-                entry.Property(prop.Name).IsModified = true;
+                //// 5) Entity üzerindeki değeri key ile değiştir
+                //entry.Property(prop.Name).CurrentValue = key;
+                //entry.Property(prop.Name).IsModified = true;
             }
         }
     }
@@ -191,9 +191,9 @@ public sealed class LocalizationCommandInterceptor : SaveChangesInterceptor
                     }, cancellationToken);
                 }
 
-                // 5) Entity üzerindeki değeri key ile değiştir
-                entry.Property(prop.Name).CurrentValue = key;
-                entry.Property(prop.Name).IsModified = true;
+                //// 5) Entity üzerindeki değeri key ile değiştir
+                //entry.Property(prop.Name).CurrentValue = key;
+                //entry.Property(prop.Name).IsModified = true;
             }
         }
     }
