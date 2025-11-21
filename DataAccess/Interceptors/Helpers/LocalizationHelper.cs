@@ -1,5 +1,6 @@
 ﻿using Core.Enums;
 using Core.Utils.Caching;
+using DataAccess.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Model.ProjectEntities;
 
@@ -16,7 +17,7 @@ public class LocalizationHelper
         return $"{tableName ?? "undefined"}_{propertyName ?? "undefined"}_{entityId ?? "undefined"}";
     }
 
-    public string? ResolveLocalizationValue(DbContext context, string key, int languageId)
+    public string? ResolveLocalizationValue(AppDbContext context, string key, int languageId)
     {
         //string cacheKey = $"localization-{key}-{languageId}";
         //string[] cacheGroups = ["localization-group"];

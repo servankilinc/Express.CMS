@@ -1,7 +1,9 @@
 ﻿using Core.Model;
 using Core.Utils.HttpContextManager;
 using Core.Utils.Localization;
+using DataAccess.Contexts;
 using DataAccess.Interceptors.Helpers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Log = Serilog.Log;
 
@@ -11,10 +13,12 @@ public sealed class LocalizationQueryInterceptor : IMaterializationInterceptor
 {
     private readonly HttpContextManager _httpContextManager;
     private readonly LocalizationHelper _localizationHelper;
-    public LocalizationQueryInterceptor(HttpContextManager httpContextManager, LocalizationHelper localizationHelper)
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
+    public LocalizationQueryInterceptor(HttpContextManager httpContextManager, LocalizationHelper localizationHelper, IDbContextFactory<AppDbContext> contextFactory)
     {
         _httpContextManager = httpContextManager;
         _localizationHelper = localizationHelper;
+        _contextFactory = contextFactory;
     }
 
     public object InitializedInstance(MaterializationInterceptionData materializationData, object entity)
@@ -34,8 +38,8 @@ public sealed class LocalizationQueryInterceptor : IMaterializationInterceptor
 
             var key = attr.Key;
             if (string.IsNullOrWhiteSpace(key)) continue;
-
-            var localizedValue = _localizationHelper.ResolveLocalizationValue(materializationData.Context, key, languageId);
+            using var context = _contextFactory.CreateDbContext();
+            var localizedValue = _localizationHelper.ResolveLocalizationValue(context, key, languageId);
             if (localizedValue != null)
             {
                 prop.SetValue(entity, localizedValue);

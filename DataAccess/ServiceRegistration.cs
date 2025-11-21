@@ -22,6 +22,7 @@ public static class ServiceRegistration
         services.AddSingleton<LocalizationCommandInterceptor>();
         services.AddSingleton<LocalizationQueryInterceptor>();
 
+        services.AddDbContextFactory<AppDbContext>();
         services.AddDbContext<AppDbContext>((serviceProvider, opt) =>
         {
             opt.UseSqlServer(configuration.GetConnectionString("Database"))
